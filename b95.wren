@@ -1202,6 +1202,7 @@ class ClassNode is Node {
 				var end = tmp.indexOf(etag)
 				tmp = tmp.take(end - 1).skip(begin).join("")
 				tmp = tmp.replace("class LTable", "class " + sym.toString + " is " + base.data)
+				tmp = tmp.replace("LTable", sym.toString)
 				if (indent > 0) {
 					tmp = tmp.split("\r\n").map(Fn.new { | ln | space(indent) + ln }).join("\r\n")
 				}
