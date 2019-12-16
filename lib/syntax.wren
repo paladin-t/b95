@@ -298,5 +298,9 @@ class Lua {
 	static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
 		return func.call(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 	}
+
+	static apply(arg) {
+		return arg
+	}
 }
 // Syntax end.

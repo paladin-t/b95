@@ -868,7 +868,7 @@ class Node {
 		gen.setSymbol(sym, Symbol.new(SymbolTypes.Variable, val))
 
 		if (global) {
-			if (!gen.containsGlobal(sym)) {
+			if (!sym.startsWith("_") && !gen.containsGlobal(sym)) {
 				gen.addGlobal(sym)
 			}
 		}
@@ -1273,7 +1273,7 @@ class FunctionNode is Node {
 		var result = toDebug(gen, indent, debug)
 		var params = head[0]
 		if (ismethod && (!isgetter && !issetter)) {
-			var isctor = id.data == "new"
+			var isctor = id.data == gen.constructor
 			var isinstance = !params.head.isEmpty && params.head[0].toCode(gen, 0, debug) == "self"
 
 			if (gen.getSymbol(id.data)) {
@@ -1284,10 +1284,13 @@ class FunctionNode is Node {
 
 			if (isctor) {
 				result = result + "construct "
+				result = result + "new"
 			} else if (!isinstance) {
 				result = result + "static "
+				result = result + id.data
+			} else {
+				result = result + id.data
 			}
-			result = result + id.data
 			result = result + "("
 			if (!params.head.isEmpty) {
 				gen.scopes.push(scope)
@@ -1770,20 +1773,36 @@ class CallNode is Node {
 
 		var result = ""
 		var id = getField(top.body)
+		var sym = id == null ? null : id.toCode(gen, 0, debug)
+		var start = 0
 		if (id == null) {
 			result = result + ".call"
-		} else {
-			id = id.toCode(gen, 0, debug)
-			var sym = gen.getSymbol(id)
+		} else if (sym == "Lua.apply") {
+			start = 1
+		} else if (sym) {
+			sym = gen.getSymbol(sym)
 			if (sym) {
-				if (sym.type == SymbolTypes.Function) {
+				if (SymbolTypes.match(sym.type, SymbolTypes.Function)) {
 					result = result + ".call"
 				}
 			}
 		}
 		result = result + "("
-		for (n in body) {
-			result = result + n.toCode(gen, 0, debug)
+		if (start == 0) {
+			for (n in body) {
+				result = result + n.toCode(gen, 0, debug)
+			}
+		} else {
+			result = result + body[0].body[0].toCode(gen, 0, debug)
+			result = result + "("
+			for (i in start...body[0].body.count) {
+				var n = body[0].body[i]
+				result = result + n.toCode(gen, 0, debug)
+				if (i != body[0].body.count - 1) {
+					result = result + ", "
+				}
+			}
+			result = result + ")"
 		}
 		result = result + ")"
 
@@ -2188,7 +2207,9 @@ class AtomNode is Node {
 				if (lib != null) {
 					gen.use(lib)
 				}
-				result = func
+				if (func != null) {
+					result = func
+				}
 			}
 		}
 
@@ -3215,6 +3236,10 @@ class SymbolTypes {
 	static Variable { 1 << 1 }
 	static Function { 1 << 2 }
 	static Class { 1 << 3 }
+
+	static match(x, y) {
+		return (x & y) != SymbolTypes.None
+	}
 }
 
 class Symbol {
@@ -3307,8 +3332,10 @@ class Code {
 class Generator {
 	/**< Public. */
 
-	construct new(raiser) {
+	construct new(raiser, options) {
 		_raiser = raiser
+
+		_constructor = options.containsKey("constructor") ? options["constructor"] : "new"
 
 		_context = Stack.new()
 
@@ -3322,6 +3349,8 @@ class Generator {
 		_onRequire = null
 		_onFunction = null
 	}
+
+	constructor { _constructor }
 
 	context { _context }
 
@@ -3399,7 +3428,7 @@ class Generator {
 			}
 		}
 
-		return Library.function(module, func)
+		return Library.function(this, module, func)
 	}
 
 	serialize(data, debug) {
@@ -3886,6 +3915,10 @@ class Library {
 				"  }\r\n" +
 				"  static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
 				"    return func.call(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)\r\n" +
+				"  }\r\n" +
+				"\r\n" +
+				"  static apply(arg) {\r\n" +
+				"    return arg\r\n" +
 				"  }\r\n" +
 				"}\r\n" +
 				"// Syntax end.\r\n" // Syntax lib.
@@ -4492,113 +4525,112 @@ class Library {
 		return __math
 	}
 
-	static function(module, func) {
-		if (__entries == null) {
-			__entries = {
-				null: {
-					"length": { "lib": "syntax", "function": "Lua.len" },
+	static function(gen, module, func) {
+		var entries = {
+			null: {
+				"length": { "lib": "syntax", "function": "Lua.len" },
 
-					"assert": { "lib": "syntax", "function": "Lua.assert" },
-					"collectgarbage": { "lib": "syntax", "function": "Lua.collectGarbage" },
-					"dofile": { "lib": "syntax", "function": "Lua.doFile" },
-					"error": { "lib": "syntax", "function": "Lua.error" },
-					"getmetatable": { "lib": "syntax", "function": "Lua.getmetatable" },
-					"ipairs": { "lib": "syntax", "function": "LIPairs.new" },
-					"load": { "lib": "syntax", "function": "Lua.load" },
-					"loadfile": { "lib": "syntax", "function": "Lua.loadFile" },
-					"next": { "lib": "syntax", "function": "Lua.next" },
-					"pairs": { "lib": "syntax", "function": "LPairs.new" },
-					"pcall": { "lib": "syntax", "function": "Lua.pcall" },
-					"print": { "lib": "syntax", "function": "Lua.print" },
-					"rawequal": { "lib": "syntax", "function": "Lua.rawEqual" },
-					"rawget": { "lib": "syntax", "function": "Lua.rawGet" },
-					"rawlen": { "lib": "syntax", "function": "Lua.rawLen" },
-					"rawset": { "lib": "syntax", "function": "Lua.rawSet" },
-					"select": { "lib": "syntax", "function": "Lua.select" },
-					"setmetatable": { "lib": "syntax", "function": "Lua.setMetatable" },
-					"tonumber": { "lib": "syntax", "function": "Lua.toNumber" },
-					"tostring": { "lib": "syntax", "function": "Lua.toString" },
-					"type": { "lib": "syntax", "function": "Lua.type" },
+				"assert": { "lib": "syntax", "function": "Lua.assert" },
+				"collectgarbage": { "lib": "syntax", "function": "Lua.collectGarbage" },
+				"dofile": { "lib": "syntax", "function": "Lua.doFile" },
+				"error": { "lib": "syntax", "function": "Lua.error" },
+				"getmetatable": { "lib": "syntax", "function": "Lua.getmetatable" },
+				"ipairs": { "lib": "syntax", "function": "LIPairs.new" },
+				"load": { "lib": "syntax", "function": "Lua.load" },
+				"loadfile": { "lib": "syntax", "function": "Lua.loadFile" },
+				"next": { "lib": "syntax", "function": "Lua.next" },
+				"pairs": { "lib": "syntax", "function": "LPairs.new" },
+				"pcall": { "lib": "syntax", "function": "Lua.pcall" },
+				"print": { "lib": "syntax", "function": "Lua.print" },
+				"rawequal": { "lib": "syntax", "function": "Lua.rawEqual" },
+				"rawget": { "lib": "syntax", "function": "Lua.rawGet" },
+				"rawlen": { "lib": "syntax", "function": "Lua.rawLen" },
+				"rawset": { "lib": "syntax", "function": "Lua.rawSet" },
+				"select": { "lib": "syntax", "function": "Lua.select" },
+				"setmetatable": { "lib": "syntax", "function": "Lua.setMetatable" },
+				"tonumber": { "lib": "syntax", "function": "Lua.toNumber" },
+				"tostring": { "lib": "syntax", "function": "Lua.toString" },
+				"type": { "lib": "syntax", "function": "Lua.type" },
 
-					"new": { "lib": "syntax", "function": "Lua.new" },
-					"call": { "lib": "syntax", "function": "Lua.call" },
+				gen.constructor: { "lib": "syntax", "function": "Lua.new" },
+				"call": { "lib": "syntax", "function": "Lua.call" },
+				"apply": { "lib": "syntax", "function": "Lua.apply" },
 
-					// TODO
-					"huge": { "lib": "math", "function": "huge" },
-					"maxinteger": { "lib": "math", "function": "maxInteger" },
-					"mininteger": { "lib": "math", "function": "minInteger" },
-					"pi": { "lib": "math", "function": "pi" }
-				},
-				"coroutine": {
-					"create": { "lib": "coroutine", "function": "LCoroutine.create" },
-					"isyieldable": { "lib": "coroutine", "function": "LCoroutine.isYieldable" },
-					"resume": { "lib": "coroutine", "function": "LCoroutine.resume" },
-					"running": { "lib": "coroutine", "function": "LCoroutine.running" },
-					"status": { "lib": "coroutine", "function": "LCoroutine.status" },
-					"wrap": { "lib": "coroutine", "function": "LCoroutine.wrap" },
-					"yield": { "lib": "coroutine", "function": "LCoroutine.yield" }
-				},
-				"string": {
-					"byte": { "lib": "string", "function": "LString.byte" },
-					"char": { "lib": "string", "function": "LString.char" },
-					"dump": { "lib": "string", "function": "LString.dump" },
-					"find": { "lib": "string", "function": "LString.find" },
-					"format": { "lib": "string", "function": "LString.format" },
-					"gmatch": { "lib": "string", "function": "LString.gmatch" },
-					"gsub": { "lib": "string", "function": "LString.gsub" },
-					"len": { "lib": "string", "function": "LString.len" },
-					"lower": { "lib": "string", "function": "LString.lower" },
-					"match": { "lib": "string", "function": "LString.match" },
-					"pack": { "lib": "string", "function": "LString.pack" },
-					"packsize": { "lib": "string", "function": "LString.packsize" },
-					"rep": { "lib": "string", "function": "LString.rep" },
-					"reverse": { "lib": "string", "function": "LString.reverse" },
-					"sub": { "lib": "string", "function": "LString.sub" },
-					"unpack": { "lib": "string", "function": "LString.unpack" },
-					"upper": { "lib": "string", "function": "LString.upper" }
-				},
-				"table": {
-					"concat": { "lib": "table", "function": "LTable.concat" },
-					"insert": { "lib": "table", "function": "LTable.insert" },
-					"move": { "lib": "table", "function": "LTable.move" },
-					"pack": { "lib": "table", "function": "LTable.pack" },
-					"remove": { "lib": "table", "function": "LTable.remove" },
-					"sort": { "lib": "table", "function": "LTable.sort" },
-					"unpack": { "lib": "table", "function": "LTable.unpack" }
-				},
-				"math": {
-					"abs": { "lib": "math", "function": "LMath.abs" },
-					"acos": { "lib": "math", "function": "LMath.acos" },
-					"asin": { "lib": "math", "function": "LMath.asin" },
-					"atan": { "lib": "math", "function": "LMath.atan" },
-					"ceil": { "lib": "math", "function": "LMath.ceil" },
-					"cos": { "lib": "math", "function": "LMath.cos" },
-					"deg": { "lib": "math", "function": "LMath.deg" },
-					"exp": { "lib": "math", "function": "LMath.exp" },
-					"floor": { "lib": "math", "function": "LMath.floor" },
-					"fmod": { "lib": "math", "function": "LMath.fmod" },
-					"huge": { "lib": "math", "function": "LMath.huge" },
-					"log": { "lib": "math", "function": "LMath.log" },
-					"max": { "lib": "math", "function": "LMath.max" },
-					"maxinteger": { "lib": "math", "function": "LMath.maxInteger" },
-					"min": { "lib": "math", "function": "LMath.min" },
-					"mininteger": { "lib": "math", "function": "LMath.minInteger" },
-					"modf": { "lib": "math", "function": "LMath.modf" },
-					"pi": { "lib": "math", "function": "LMath.pi" },
-					"rad": { "lib": "math", "function": "LMath.rad" },
-					"random": { "lib": "math", "function": "LMath.random" },
-					"randomseed": { "lib": "math", "function": "LMath.randomSeed" },
-					"sin": { "lib": "math", "function": "LMath.sin" },
-					"sqrt": { "lib": "math", "function": "LMath.sqrt" },
-					"tan": { "lib": "math", "function": "LMath.tan" },
-					"tointeger": { "lib": "math", "function": "LMath.toInteger" },
-					"type": { "lib": "math", "function": "LMath.type" },
-					"ult": { "lib": "math", "function": "LMath.ult" }
-				}
+				// TODO
+				"huge": { "lib": "math", "function": "huge" },
+				"maxinteger": { "lib": "math", "function": "maxInteger" },
+				"mininteger": { "lib": "math", "function": "minInteger" },
+				"pi": { "lib": "math", "function": "pi" }
+			},
+			"coroutine": {
+				"create": { "lib": "coroutine", "function": "LCoroutine.create" },
+				"isyieldable": { "lib": "coroutine", "function": "LCoroutine.isYieldable" },
+				"resume": { "lib": "coroutine", "function": "LCoroutine.resume" },
+				"running": { "lib": "coroutine", "function": "LCoroutine.running" },
+				"status": { "lib": "coroutine", "function": "LCoroutine.status" },
+				"wrap": { "lib": "coroutine", "function": "LCoroutine.wrap" },
+				"yield": { "lib": "coroutine", "function": "LCoroutine.yield" }
+			},
+			"string": {
+				"byte": { "lib": "string", "function": "LString.byte" },
+				"char": { "lib": "string", "function": "LString.char" },
+				"dump": { "lib": "string", "function": "LString.dump" },
+				"find": { "lib": "string", "function": "LString.find" },
+				"format": { "lib": "string", "function": "LString.format" },
+				"gmatch": { "lib": "string", "function": "LString.gmatch" },
+				"gsub": { "lib": "string", "function": "LString.gsub" },
+				"len": { "lib": "string", "function": "LString.len" },
+				"lower": { "lib": "string", "function": "LString.lower" },
+				"match": { "lib": "string", "function": "LString.match" },
+				"pack": { "lib": "string", "function": "LString.pack" },
+				"packsize": { "lib": "string", "function": "LString.packsize" },
+				"rep": { "lib": "string", "function": "LString.rep" },
+				"reverse": { "lib": "string", "function": "LString.reverse" },
+				"sub": { "lib": "string", "function": "LString.sub" },
+				"unpack": { "lib": "string", "function": "LString.unpack" },
+				"upper": { "lib": "string", "function": "LString.upper" }
+			},
+			"table": {
+				"concat": { "lib": "table", "function": "LTable.concat" },
+				"insert": { "lib": "table", "function": "LTable.insert" },
+				"move": { "lib": "table", "function": "LTable.move" },
+				"pack": { "lib": "table", "function": "LTable.pack" },
+				"remove": { "lib": "table", "function": "LTable.remove" },
+				"sort": { "lib": "table", "function": "LTable.sort" },
+				"unpack": { "lib": "table", "function": "LTable.unpack" }
+			},
+			"math": {
+				"abs": { "lib": "math", "function": "LMath.abs" },
+				"acos": { "lib": "math", "function": "LMath.acos" },
+				"asin": { "lib": "math", "function": "LMath.asin" },
+				"atan": { "lib": "math", "function": "LMath.atan" },
+				"ceil": { "lib": "math", "function": "LMath.ceil" },
+				"cos": { "lib": "math", "function": "LMath.cos" },
+				"deg": { "lib": "math", "function": "LMath.deg" },
+				"exp": { "lib": "math", "function": "LMath.exp" },
+				"floor": { "lib": "math", "function": "LMath.floor" },
+				"fmod": { "lib": "math", "function": "LMath.fmod" },
+				"huge": { "lib": "math", "function": "LMath.huge" },
+				"log": { "lib": "math", "function": "LMath.log" },
+				"max": { "lib": "math", "function": "LMath.max" },
+				"maxinteger": { "lib": "math", "function": "LMath.maxInteger" },
+				"min": { "lib": "math", "function": "LMath.min" },
+				"mininteger": { "lib": "math", "function": "LMath.minInteger" },
+				"modf": { "lib": "math", "function": "LMath.modf" },
+				"pi": { "lib": "math", "function": "LMath.pi" },
+				"rad": { "lib": "math", "function": "LMath.rad" },
+				"random": { "lib": "math", "function": "LMath.random" },
+				"randomseed": { "lib": "math", "function": "LMath.randomSeed" },
+				"sin": { "lib": "math", "function": "LMath.sin" },
+				"sqrt": { "lib": "math", "function": "LMath.sqrt" },
+				"tan": { "lib": "math", "function": "LMath.tan" },
+				"tointeger": { "lib": "math", "function": "LMath.toInteger" },
+				"type": { "lib": "math", "function": "LMath.type" },
+				"ult": { "lib": "math", "function": "LMath.ult" }
 			}
 		}
-		if (__entries.containsKey(module) && __entries[module].containsKey(func)) {
-			return __entries[module][func]
+		if (entries.containsKey(module) && entries[module].containsKey(func)) {
+			return entries[module][func]
 		}
 
 		return null
@@ -4620,12 +4652,17 @@ class B95 {
 
 		_lexer = Lexer.new(raise)
 		_parser = Parser.new(raise)
-		_generator = Generator.new(raise)
+		_generator = Generator.new(raise, { })
 	}
 	construct new(raise) {
 		_lexer = Lexer.new(raise)
 		_parser = Parser.new(raise)
-		_generator = Generator.new(raise)
+		_generator = Generator.new(raise, { })
+	}
+	construct new(raise, options) {
+		_lexer = Lexer.new(raise)
+		_parser = Parser.new(raise)
+		_generator = Generator.new(raise, options)
 	}
 
 	/**< Compile. */

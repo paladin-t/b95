@@ -56,7 +56,7 @@ Note: to unpack values properly from a tuple returned by some functions (eg. `co
 
 Otherwise eg. with `obj["func"]()`, compiles to `obj.func.call()`.
 
-Note: use `call(func, args)` to hint for `func.call(args)`.
+Note: use `call(func, args)` to hint for `func.call(args)`; `apply(method, args)` to hint for `method(args)`.
 
 #### 1.2 Library port
 
