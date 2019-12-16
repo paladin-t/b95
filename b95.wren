@@ -1062,19 +1062,19 @@ class PrototypeNode is Node {
 					result = result + space(indent + 1)
 					result = result + "if"
 					result = result + " ("
-					result = result + "__" + sym + " == null"
+					result = result + "_" + sym + " == null"
 					result = result + ") "
 					result = result + "{"
 					result = result + newline
 					result = result + space(indent + 2)
-					result = result + "__" + sym + " = " + v.toCode(gen, 0, debug)
+					result = result + "_" + sym + " = " + v.toCode(gen, 0, debug)
 					result = result + newline
 					result = result + space(indent + 1)
 					result = result + "}"
 					result = result + newline
 					result = result + space(indent + 1)
 					result = result + "return "
-					result = result + "__" + sym
+					result = result + "_" + sym
 					result = result + newline
 					result = result + space(indent)
 					result = result + "}"
@@ -1086,7 +1086,7 @@ class PrototypeNode is Node {
 					result = result + "{"
 					result = result + newline
 					result = result + space(indent + 1)
-					result = result + "__" + sym + " = value"
+					result = result + "_" + sym + " = value"
 					result = result + newline
 					result = result + space(indent)
 					result = result + "}"
@@ -1256,10 +1256,14 @@ class FunctionNode is Node {
 
 	toCode(gen, indent, debug) {
 		var ismethod = false
+		var isgetter = false
+		var issetter = false
 		var isinline = false
 		if (gen.context.count >= 4) {
 			var tmp = gen.context.take(3).toList
 			ismethod = (tmp[0] is ExpressionNode) && (tmp[1] is PrototypeNode) && (tmp[2] is ClassNode)
+			isgetter = ismethod && id.data.startsWith("get_")
+			issetter = ismethod && id.data.startsWith("set_")
 			isinline = (tmp[0] is ExpressionNode) && (tmp[1] is ExpressionsNode) && (tmp[2] is CallNode)
 		}
 
@@ -1268,9 +1272,9 @@ class FunctionNode is Node {
 		var scope = Scope.new()
 		var result = toDebug(gen, indent, debug)
 		var params = head[0]
-		if (ismethod) {
+		if (ismethod && (!isgetter && !issetter)) {
 			var isctor = id.data == "new"
-			var withself = !params.head.isEmpty && params.head[0].toCode(gen, 0, debug) == "self"
+			var isinstance = !params.head.isEmpty && params.head[0].toCode(gen, 0, debug) == "self"
 
 			if (gen.getSymbol(id.data)) {
 				gen.raise(Except.SyntaxSymbolAlreadyDefined(id.data, tokens[0].begin))
@@ -1280,14 +1284,14 @@ class FunctionNode is Node {
 
 			if (isctor) {
 				result = result + "construct "
-			} else if (!withself) {
+			} else if (!isinstance) {
 				result = result + "static "
 			}
 			result = result + id.data
 			result = result + "("
 			if (!params.head.isEmpty) {
 				gen.scopes.push(scope)
-				var start = withself ? 1 : 0
+				var start = isinstance ? 1 : 0
 				for (i in start...params.head.count) {
 					var p = params.head[i]
 					result = result + p.toCode(gen, 0, debug)
@@ -1299,6 +1303,48 @@ class FunctionNode is Node {
 				gen.scopes.pop()
 			}
 			result = result + ")"
+			result = result + " "
+			result = result + "{"
+			result = result + newline
+			gen.scopes.push(scope)
+			for (n in body) {
+				result = result + n.toCode(gen, indent + 1, debug)
+			}
+			gen.scopes.pop()
+			result = result + space(indent) + "}"
+		} else if (isgetter || issetter) {
+			var isinstance = !params.head.isEmpty && params.head[0].toCode(gen, 0, debug) == "self"
+
+			if (gen.getSymbol(id.data)) {
+				gen.raise(Except.SyntaxSymbolAlreadyDefined(id.data, tokens[0].begin))
+			} else {
+				gen.setSymbol(id.data, Symbol.new(SymbolTypes.Function, id))
+			}
+
+			if (!isinstance) {
+				result = result + "static "
+			}
+			result = result + id.data.skip(4).join("")
+			if (issetter) {
+				result = result + " = "
+				result = result + "("
+			}
+			if (!params.head.isEmpty) {
+				gen.scopes.push(scope)
+				var start = isinstance ? 1 : 0
+				for (i in start...params.head.count) {
+					var p = params.head[i]
+					result = result + p.toCode(gen, 0, debug)
+					if (i < params.head.count - 1) {
+						result = result + ", "
+					}
+					declare(gen, p, debug)
+				}
+				gen.scopes.pop()
+			}
+			if (issetter) {
+				result = result + ")"
+			}
 			result = result + " "
 			result = result + "{"
 			result = result + newline
