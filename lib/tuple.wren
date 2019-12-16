@@ -1,7 +1,7 @@
 // Tuple begin.
 class LTuple {
 	construct new() {
-		_args = [ ]
+		ctor([ ])
 	}
 	construct new(arg0) {
 		ctor([ arg0 ])
@@ -24,7 +24,7 @@ class LTuple {
 	construct new(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
 		ctor([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])
 	}
-	construct new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.
+	construct new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
 		ctor([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])
 	}
 	ctor(argv) {

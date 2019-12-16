@@ -1,12 +1,12 @@
 // Coroutine begin.
 class LCoroutine {
-	static temporary {
+	static temporary_ {
 		var result = __temporary
 		__temporary = null
 
 		return result
 	}
-	static temporary = (value) {
+	static temporary_ = (value) {
 		__temporary = value
 	}
 
@@ -36,7 +36,7 @@ class LCoroutine {
 		if (co.isDone) {
 			return LTuple.new(false, "Cannot resume dead coroutine.")
 		}
-		temporary = null
+		temporary_ = null
 
 		return LTuple.new(true, co.call())
 	}
@@ -44,7 +44,7 @@ class LCoroutine {
 		if (co.isDone) {
 			return LTuple.new(false, "Cannot resume dead coroutine.")
 		}
-		temporary = arg0
+		temporary_ = arg0
 
 		return LTuple.new(true, co.call(arg0))
 	}
@@ -52,7 +52,7 @@ class LCoroutine {
 		if (co.isDone) {
 			return LTuple.new(false, "Cannot resume dead coroutine.")
 		}
-		temporary = LTuple.new(arg0, arg1)
+		temporary_ = LTuple.new(arg0, arg1)
 
 		return LTuple.new(true, co.call([ arg0, arg1 ]))
 	}
@@ -60,42 +60,42 @@ class LCoroutine {
 		if (co.isDone) {
 			return LTuple.new(false, "Cannot resume dead coroutine.")
 		}
-		temporary = LTuple.new(arg0, arg1, arg2)
+		temporary_ = LTuple.new(arg0, arg1, arg2)
 
 		return LTuple.new(true, co.call([ arg0, arg1, arg2 ]))
 	}
-	static resume(co, arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.
+	static resume(co, arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.
 		if (co.isDone) {
 			return LTuple.new(false, "Cannot resume dead coroutine.")
 		}
-		temporary = LTuple.new(arg0, arg1, arg2, arg3)
+		temporary_ = LTuple.new(arg0, arg1, arg2, arg3)
 
 		return LTuple.new(true, co.call([ arg0, arg1, arg2, arg3 ]))
 	}
 	static yield() {
 		Fiber.yield()
 
-		return temporary
+		return temporary_
 	}
 	static yield(arg0) {
 		Fiber.yield(arg0)
 
-		return temporary
+		return temporary_
 	}
 	static yield(arg0, arg1) {
 		Fiber.yield(LTuple.new(arg0, arg1))
 
-		return temporary
+		return temporary_
 	}
 	static yield(arg0, arg1, arg2) {
 		Fiber.yield(LTuple.new(arg0, arg1, arg2))
 
-		return temporary
+		return temporary_
 	}
-	static yield(arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.
+	static yield(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.
 		Fiber.yield(LTuple.new(arg0, arg1, arg2, arg3))
 
-		return temporary
+		return temporary_
 	}
 
 	static isYieldable() {

@@ -35,7 +35,7 @@ class LString {
 	static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
 		return LString.char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)
 	}
-	static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.
+	static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
 		return LString.char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)
 	}
 	static dump(function) {

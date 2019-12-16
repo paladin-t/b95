@@ -85,10 +85,10 @@ class LTable {
 	}
 
 	toString {
-		if (len__ == raw.count) {
+		if (len__ == raw_.count) {
 			var result = ""
 			for (i in 1..len__) {
-				result = result + raw[i].toString
+				result = result + raw_[i].toString
 				if (i != len__) {
 					result = result + ", "
 				}
@@ -97,10 +97,10 @@ class LTable {
 			return "{ " + result + " }"
 		}
 
-		return raw.toString
+		return raw_.toString
 	}
 
-	raw {
+	raw_ {
 		if (_raw == null) {
 			_raw = { }
 		}
@@ -109,29 +109,29 @@ class LTable {
 	}
 
 	[index] {
-		if (raw.containsKey(index)) {
-			return raw[index]
+		if (raw_.containsKey(index)) {
+			return raw_[index]
 		}
 
 		return null
 	}
 	[index] = (value) {
 		if (value == null) {
-			if (raw.containsKey(index)) {
-				raw.remove(index)
+			if (raw_.containsKey(index)) {
+				raw_.remove(index)
 			}
 		} else {
-			raw[index] = value
+			raw_[index] = value
 			_length = -1
 		}
 	}
 
-	count { raw.count }
+	count { raw_.count }
 
 	len__ {
 		if (_length == -1) {
-			for (i in 1..raw.count) {
-				if (raw.containsKey(i)) {
+			for (i in 1..raw_.count) {
+				if (raw_.containsKey(i)) {
 					_length = i // 1-based.
 				} else {
 					break
@@ -143,12 +143,12 @@ class LTable {
 	}
 
 	iterate(iterator) {
-		iterator = raw.iterate(iterator)
+		iterator = raw_.iterate(iterator)
 
 		return iterator
 	}
 	iteratorValue(iterator) {
-		return raw.iteratorValue(iterator)
+		return raw_.iteratorValue(iterator)
 	}
 } // `LTable`.
 // Table end.

@@ -14,13 +14,13 @@ Compiling Lua code to Wren source code, then running it through Wren. Why not.
 
 ### 1. How it works
 
-Wren's dynamic typing and scripting nature is quite similar to Lua. The typing system, execution flow and memory management part can be straightforward migrated. The main difference is that Wren uses a classy object model, Lua uses prototyping. But it's still translatable with a little bit wrought work.
+Lua's dynamic typing and scripting nature is quite similar to Wren. The typing system, execution flow and memory management parts can be straightforward migrated. The main difference is that Wren uses a classy object model, Lua uses prototyping. But it's still translatable with a little bit wrought work.
 
 #### 1.1 Syntax translation
 
-**Multi assignment**
+**Multiple assignment**
 
-B95 introduced an internal helper tuple for multi assignment. Eg.
+B95 introduced an internal tuple helper for multiple assignment. Eg.
 
 ```lua
 a, b = b, a
@@ -34,7 +34,7 @@ a = tmp_0[0]
 b = tmp_0[1]
 ```
 
-Note: to unpack proper values of a tuple returned by some functions (eg. `coroutine.yield`), add an extra variable on the left side of assign operator to hint a tuple unpacking. Eg. `dummy` in `somevar, dummy = coroutine.yield(1, 2)`. Otherwise a single variable gets tuple object.
+Note: to unpack values properly from a tuple returned by some functions (eg. `coroutine.yield`), add an extra variable on the left side of assign operator to hint tuple unpacking. Eg. `dummy` in `somevar, dummy = coroutine.yield(1, 2)`. Otherwise a single variable would get returned tuple object per se.
 
 **Function definition**
 
@@ -60,7 +60,7 @@ Note: use `call(func, args)` to hint for `func.call(args)`.
 
 #### 1.2 Library port
 
-Lua standard library is ported to Wren for B95's referencing. The source code of the port is in the "[lib](lib)" directory, and has been already built by "[build/build.wren](build/build.wren)", so generally you do not need to build it manually.
+Lua standard library is rewritten in Wren for B95's referencing. The source code of the port is in the "[lib](lib)" directory, and has been already built by "[build/build.wren](build/build.wren)", so generally you do not need to build it manually.
 
 #### 1.3 External registration
 
@@ -104,12 +104,33 @@ See `class Code` in "[b95.wren](b95.wren)" for details of the returned object by
 #### 2.4 Class
 
 ```lua
-clz = class(
+Klass = class(
 	{
-		-- class body.
-	} [, base]
+		-- Constructor `new` compiles to `construct new()`.
+		new = function ()
+		end,
+
+		-- Compiles to Wren getter/setter.
+		field0 = 0,
+		field1 = 1,
+
+		-- Function without `self` compiles to static method.
+		func0 = function (a, b)
+			local c = a / b
+
+			return c
+		end,
+
+		-- Function with `self` compiles to instance method.
+		func1 = function (self, c, d)
+			self["field0"] = c
+			self.field1 = d
+		end
+	},
+	base -- Base class, optional.
 )
-obj = new(clz)
+
+obj = new(Klass) -- Instantiate a class, compiles to `Klass.new()`.
 ```
 
 This is also valid Lua syntax, so that it's possible to write compatible code for both B95 and C-Lua.
@@ -119,9 +140,11 @@ This is also valid Lua syntax, so that it's possible to write compatible code fo
 ```lua
 tbl = { 1 = "uno", 2 = "dos", 3 = "thres" }
 tbl["key"] = "value"
+
 for k, v in pairs(tbl) do
 	print(k, v)
 end
+
 print(length(tbl))
 ```
 
@@ -131,11 +154,35 @@ print(length(tbl))
 obj = require "path"
 ```
 
-B95 invokes callback set by `B95.onRequire` during compiling for customized importing.
+B95 invokes callback set by `B95.onRequire` during compile time for customized importing. Eg.
+
+```wren
+b95.onRequire(
+	Fn.new { | path, klass |
+		if (path == "bar" && klass == "foo") {
+			return "import \"path\" for module" // This replaces matched requirement.
+		}
+
+		return null
+	}
+)
+```
 
 #### 2.7 Registering
 
-B95 invokes callback set by `B95.onFunction` during compiling for customized functions.
+B95 invokes callback set by `B95.onFunction` during compile time for customized functions. Eg.
+
+```wren
+b95.onFunction(
+	Fn.new { | module, func |
+		if (module == "foo" && func == "bar") {
+			return { "lib": null, "function": "lib.func" } // This replaces function invoking.
+		}
+
+		return null
+	}
+)
+```
 
 ### 3. Feature list
 

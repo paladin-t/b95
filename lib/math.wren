@@ -52,7 +52,7 @@ class LMath {
 	static max(arg0, arg1, arg2) {
 		return max(max(arg0, arg1), arg2)
 	}
-	static max(arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.
+	static max(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.
 		return max(max(max(arg0, arg1), arg2), arg3)
 	}
 	static maxInteger {
@@ -64,7 +64,7 @@ class LMath {
 	static min(arg0, arg1, arg2) {
 		return min(min(arg0, arg1), arg2)
 	}
-	static min(arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.
+	static min(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.
 		return min(min(min(arg0, arg1), arg2), arg3)
 	}
 	static minInteger {

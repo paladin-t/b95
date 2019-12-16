@@ -3213,6 +3213,9 @@ class Scope {
 	}
 }
 
+/**
+ * @brief Generated Wren code object.
+ */
 class Code {
 	construct new(li, glb, ln) {
 		_libs = li
@@ -3223,16 +3226,16 @@ class Code {
 		_ast = null
 	}
 
-	libs { _libs }
-	globals { _globals }
-	lines { _lines }
+	libs { _libs } // Built-in libraries that patch or implement Lua functionalities.
+	globals { _globals } // Global variables.
+	lines { _lines } // Translated code.
 
-	tokens { _tokens }
+	tokens { _tokens } // Splitted tokens.
 	tokens = (value) { _tokens = value }
-	ast { _ast }
+	ast { _ast } // Parsed AST.
 	ast = (value) { _ast = value }
 
-	toString {
+	toString { // Concats to runnable code.
 		var result = ""
 		if (!_libs.isEmpty) {
 			result = result + _libs + "\r\n"
@@ -3469,7 +3472,7 @@ class Library {
 				"// Tuple begin.\r\n" +
 				"class LTuple {\r\n" +
 				"  construct new() {\r\n" +
-				"    _args = [ ]\r\n" +
+				"    ctor([ ])\r\n" +
 				"  }\r\n" +
 				"  construct new(arg0) {\r\n" +
 				"    ctor([ arg0 ])\r\n" +
@@ -3492,7 +3495,7 @@ class Library {
 				"  construct new(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
 				"    ctor([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])\r\n" +
 				"  }\r\n" +
-				"  construct new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.\r\n" +
+				"  construct new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
 				"    ctor([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])\r\n" +
 				"  }\r\n" +
 				"  ctor(argv) {\r\n" +
@@ -3720,7 +3723,7 @@ class Library {
 				"  static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
 				"    Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])\r\n" +
 				"  }\r\n" +
-				"  static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.\r\n" +
+				"  static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
 				"    Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])\r\n" +
 				"  }\r\n" +
 				"  static rawEqual(v1, v2) {\r\n" +
@@ -3806,7 +3809,7 @@ class Library {
 				"  static new(y, arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
 				"    return y.new(arg0, arg1, arg2, arg3, arg4, arg5, arg6)\r\n" +
 				"  }\r\n" +
-				"  static new(y, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.\r\n" +
+				"  static new(y, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
 				"    return y.new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)\r\n" +
 				"  }\r\n" +
 				"\r\n" +
@@ -3834,7 +3837,7 @@ class Library {
 				"  static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
 				"    return func.call(arg0, arg1, arg2, arg3, arg4, arg5, arg6)\r\n" +
 				"  }\r\n" +
-				"  static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.\r\n" +
+				"  static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
 				"    return func.call(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)\r\n" +
 				"  }\r\n" +
 				"}\r\n" +
@@ -3849,13 +3852,13 @@ class Library {
 			__coroutine = "" +
 				"// Coroutine begin.\r\n" +
 				"class LCoroutine {\r\n" +
-				"  static temporary {\r\n" +
+				"  static temporary_ {\r\n" +
 				"    var result = __temporary\r\n" +
 				"    __temporary = null\r\n" +
 				"\r\n" +
 				"    return result\r\n" +
 				"  }\r\n" +
-				"  static temporary = (value) {\r\n" +
+				"  static temporary_ = (value) {\r\n" +
 				"    __temporary = value\r\n" +
 				"  }\r\n" +
 				"\r\n" +
@@ -3878,16 +3881,14 @@ class Library {
 				"    return result\r\n" +
 				"  }\r\n" +
 				"  static wrap(f) {\r\n" +
-				"    return Fiber.new {\r\n" +
-				"      Fiber.yield(f)\r\n" +
-				"    }\r\n" +
+				"    Fiber.abort(\"Not implemented.\")\r\n" +
 				"  }\r\n" +
 				"\r\n" +
 				"  static resume(co) {\r\n" +
 				"    if (co.isDone) {\r\n" +
 				"      return LTuple.new(false, \"Cannot resume dead coroutine.\")\r\n" +
 				"    }\r\n" +
-				"    temporary = null\r\n" +
+				"    temporary_ = null\r\n" +
 				"\r\n" +
 				"    return LTuple.new(true, co.call())\r\n" +
 				"  }\r\n" +
@@ -3895,7 +3896,7 @@ class Library {
 				"    if (co.isDone) {\r\n" +
 				"      return LTuple.new(false, \"Cannot resume dead coroutine.\")\r\n" +
 				"    }\r\n" +
-				"    temporary = arg0\r\n" +
+				"    temporary_ = arg0\r\n" +
 				"\r\n" +
 				"    return LTuple.new(true, co.call(arg0))\r\n" +
 				"  }\r\n" +
@@ -3903,7 +3904,7 @@ class Library {
 				"    if (co.isDone) {\r\n" +
 				"      return LTuple.new(false, \"Cannot resume dead coroutine.\")\r\n" +
 				"    }\r\n" +
-				"    temporary = LTuple.new(arg0, arg1)\r\n" +
+				"    temporary_ = LTuple.new(arg0, arg1)\r\n" +
 				"\r\n" +
 				"    return LTuple.new(true, co.call([ arg0, arg1 ]))\r\n" +
 				"  }\r\n" +
@@ -3911,42 +3912,42 @@ class Library {
 				"    if (co.isDone) {\r\n" +
 				"      return LTuple.new(false, \"Cannot resume dead coroutine.\")\r\n" +
 				"    }\r\n" +
-				"    temporary = LTuple.new(arg0, arg1, arg2)\r\n" +
+				"    temporary_ = LTuple.new(arg0, arg1, arg2)\r\n" +
 				"\r\n" +
 				"    return LTuple.new(true, co.call([ arg0, arg1, arg2 ]))\r\n" +
 				"  }\r\n" +
-				"  static resume(co, arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.\r\n" +
+				"  static resume(co, arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.\r\n" +
 				"    if (co.isDone) {\r\n" +
 				"      return LTuple.new(false, \"Cannot resume dead coroutine.\")\r\n" +
 				"    }\r\n" +
-				"    temporary = LTuple.new(arg0, arg1, arg2, arg3)\r\n" +
+				"    temporary_ = LTuple.new(arg0, arg1, arg2, arg3)\r\n" +
 				"\r\n" +
 				"    return LTuple.new(true, co.call([ arg0, arg1, arg2, arg3 ]))\r\n" +
 				"  }\r\n" +
 				"  static yield() {\r\n" +
 				"    Fiber.yield()\r\n" +
 				"\r\n" +
-				"    return temporary\r\n" +
+				"    return temporary_\r\n" +
 				"  }\r\n" +
 				"  static yield(arg0) {\r\n" +
 				"    Fiber.yield(arg0)\r\n" +
 				"\r\n" +
-				"    return temporary\r\n" +
+				"    return temporary_\r\n" +
 				"  }\r\n" +
 				"  static yield(arg0, arg1) {\r\n" +
 				"    Fiber.yield(LTuple.new(arg0, arg1))\r\n" +
 				"\r\n" +
-				"    return temporary\r\n" +
+				"    return temporary_\r\n" +
 				"  }\r\n" +
 				"  static yield(arg0, arg1, arg2) {\r\n" +
 				"    Fiber.yield(LTuple.new(arg0, arg1, arg2))\r\n" +
 				"\r\n" +
-				"    return temporary\r\n" +
+				"    return temporary_\r\n" +
 				"  }\r\n" +
-				"  static yield(arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.\r\n" +
+				"  static yield(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.\r\n" +
 				"    Fiber.yield(LTuple.new(arg0, arg1, arg2, arg3))\r\n" +
 				"\r\n" +
-				"    return temporary\r\n" +
+				"    return temporary_\r\n" +
 				"  }\r\n" +
 				"\r\n" +
 				"  static isYieldable() {\r\n" +
@@ -4005,7 +4006,7 @@ class Library {
 				"  static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
 				"    return LString.char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)\r\n" +
 				"  }\r\n" +
-				"  static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.\r\n" +
+				"  static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
 				"    return LString.char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)\r\n" +
 				"  }\r\n" +
 				"  static dump(function) {\r\n" +
@@ -4215,10 +4216,10 @@ class Library {
 				"  }\r\n" +
 				"\r\n" +
 				"  toString {\r\n" +
-				"    if (len__ == raw.count) {\r\n" +
+				"    if (len__ == raw_.count) {\r\n" +
 				"      var result = \"\"\r\n" +
 				"      for (i in 1..len__) {\r\n" +
-				"        result = result + raw[i].toString\r\n" +
+				"        result = result + raw_[i].toString\r\n" +
 				"        if (i != len__) {\r\n" +
 				"          result = result + \", \"\r\n" +
 				"        }\r\n" +
@@ -4227,10 +4228,10 @@ class Library {
 				"      return \"{ \" + result + \" }\"\r\n" +
 				"    }\r\n" +
 				"\r\n" +
-				"    return raw.toString\r\n" +
+				"    return raw_.toString\r\n" +
 				"  }\r\n" +
 				"\r\n" +
-				"  raw {\r\n" +
+				"  raw_ {\r\n" +
 				"    if (_raw == null) {\r\n" +
 				"      _raw = { }\r\n" +
 				"    }\r\n" +
@@ -4239,29 +4240,29 @@ class Library {
 				"  }\r\n" +
 				"\r\n" +
 				"  [index] {\r\n" +
-				"    if (raw.containsKey(index)) {\r\n" +
-				"      return raw[index]\r\n" +
+				"    if (raw_.containsKey(index)) {\r\n" +
+				"      return raw_[index]\r\n" +
 				"    }\r\n" +
 				"\r\n" +
 				"    return null\r\n" +
 				"  }\r\n" +
 				"  [index] = (value) {\r\n" +
 				"    if (value == null) {\r\n" +
-				"      if (raw.containsKey(index)) {\r\n" +
-				"        raw.remove(index)\r\n" +
+				"      if (raw_.containsKey(index)) {\r\n" +
+				"        raw_.remove(index)\r\n" +
 				"      }\r\n" +
 				"    } else {\r\n" +
-				"      raw[index] = value\r\n" +
+				"      raw_[index] = value\r\n" +
 				"      _length = -1\r\n" +
 				"    }\r\n" +
 				"  }\r\n" +
 				"\r\n" +
-				"  count { raw.count }\r\n" +
+				"  count { raw_.count }\r\n" +
 				"\r\n" +
 				"  len__ {\r\n" +
 				"    if (_length == -1) {\r\n" +
-				"      for (i in 1..raw.count) {\r\n" +
-				"        if (raw.containsKey(i)) {\r\n" +
+				"      for (i in 1..raw_.count) {\r\n" +
+				"        if (raw_.containsKey(i)) {\r\n" +
 				"          _length = i // 1-based.\r\n" +
 				"        } else {\r\n" +
 				"          break\r\n" +
@@ -4273,12 +4274,12 @@ class Library {
 				"  }\r\n" +
 				"\r\n" +
 				"  iterate(iterator) {\r\n" +
-				"    iterator = raw.iterate(iterator)\r\n" +
+				"    iterator = raw_.iterate(iterator)\r\n" +
 				"\r\n" +
 				"    return iterator\r\n" +
 				"  }\r\n" +
 				"  iteratorValue(iterator) {\r\n" +
-				"    return raw.iteratorValue(iterator)\r\n" +
+				"    return raw_.iteratorValue(iterator)\r\n" +
 				"  }\r\n" +
 				"} // `LTable`.\r\n" +
 				"// Table end.\r\n" // Table lib.
@@ -4344,7 +4345,7 @@ class Library {
 				"  static max(arg0, arg1, arg2) {\r\n" +
 				"    return max(max(arg0, arg1), arg2)\r\n" +
 				"  }\r\n" +
-				"  static max(arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.\r\n" +
+				"  static max(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.\r\n" +
 				"    return max(max(max(arg0, arg1), arg2), arg3)\r\n" +
 				"  }\r\n" +
 				"  static maxInteger {\r\n" +
@@ -4356,7 +4357,7 @@ class Library {
 				"  static min(arg0, arg1, arg2) {\r\n" +
 				"    return min(min(arg0, arg1), arg2)\r\n" +
 				"  }\r\n" +
-				"  static min(arg0, arg1, arg2, arg3) { // Now supports up to 4 parameters.\r\n" +
+				"  static min(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.\r\n" +
 				"    return min(min(min(arg0, arg1), arg2), arg3)\r\n" +
 				"  }\r\n" +
 				"  static minInteger {\r\n" +

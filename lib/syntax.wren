@@ -181,7 +181,7 @@ class Lua {
 	static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
 		Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])
 	}
-	static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.
+	static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
 		Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])
 	}
 	static rawEqual(v1, v2) {
@@ -267,7 +267,7 @@ class Lua {
 	static new(y, arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
 		return y.new(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 	}
-	static new(y, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.
+	static new(y, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
 		return y.new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 	}
 
@@ -295,7 +295,7 @@ class Lua {
 	static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
 		return func.call(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 	}
-	static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Now supports up to 8 parameters.
+	static call(func, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
 		return func.call(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 	}
 }
