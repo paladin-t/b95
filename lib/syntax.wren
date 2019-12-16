@@ -271,6 +271,10 @@ class Lua {
 		return y.new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 	}
 
+	static isa(obj, y) {
+		return obj is y
+	}
+
 	static call(func) {
 		return func.call()
 	}

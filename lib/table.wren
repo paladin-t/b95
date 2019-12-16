@@ -160,6 +160,16 @@ class LTable {
 	isEmpty {
 		return data_.isEmpty
 	}
+	clear() {
+		data_.clear()
+	}
+
+	keys {
+		return data_.keys
+	}
+	values {
+		return data_.values
+	}
 
 	containsKey(key) {
 		return data_.containsKey(key)

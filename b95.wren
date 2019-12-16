@@ -1776,7 +1776,7 @@ class CallNode is Node {
 		var sym = id == null ? null : id.toCode(gen, 0, debug)
 		var start = 0
 		if (id == null) {
-			result = result + ".call"
+			// Does nothing.
 		} else if (sym == "Lua.apply") {
 			start = 1
 		} else if (sym) {
@@ -3892,6 +3892,10 @@ class Library {
 				"    return y.new(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)\r\n" +
 				"  }\r\n" +
 				"\r\n" +
+				"  static isa(obj, y) {\r\n" +
+				"    return obj is y\r\n" +
+				"  }\r\n" +
+				"\r\n" +
 				"  static call(func) {\r\n" +
 				"    return func.call()\r\n" +
 				"  }\r\n" +
@@ -4374,6 +4378,16 @@ class Library {
 				"  isEmpty {\r\n" +
 				"    return data_.isEmpty\r\n" +
 				"  }\r\n" +
+				"  clear() {\r\n" +
+				"    data_.clear()\r\n" +
+				"  }\r\n" +
+				"\r\n" +
+				"  keys {\r\n" +
+				"    return data_.keys\r\n" +
+				"  }\r\n" +
+				"  values {\r\n" +
+				"    return data_.values\r\n" +
+				"  }\r\n" +
 				"\r\n" +
 				"  containsKey(key) {\r\n" +
 				"    return data_.containsKey(key)\r\n" +
@@ -4593,6 +4607,7 @@ class Library {
 				"type": { "lib": "syntax", "function": "Lua.type" },
 
 				gen.constructor: { "lib": "syntax", "function": "Lua.new" },
+				"is": { "lib": "syntax", "function": "Lua.isa" },
 				"call": { "lib": "syntax", "function": "Lua.call" },
 				"apply": { "lib": "syntax", "function": "Lua.apply" },
 
