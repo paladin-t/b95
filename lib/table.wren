@@ -85,10 +85,10 @@ class LTable {
 	}
 
 	toString {
-		if (len__ == raw_.count) {
+		if (len__ == data_.count) {
 			var result = ""
 			for (i in 1..len__) {
-				result = result + raw_[i].toString
+				result = result + data_[i].toString
 				if (i != len__) {
 					result = result + ", "
 				}
@@ -97,41 +97,78 @@ class LTable {
 			return "{ " + result + " }"
 		}
 
-		return raw_.toString
+		return data_.toString
 	}
-
-	raw_ {
-		if (_raw == null) {
-			_raw = { }
+	toWren {
+		var result = null
+		if (count == len__) {
+			result = [ ]
+			for (i in 0...count) {
+				var v = this[i + 1]
+				if (v is LTable) {
+					v = v.toWren
+				}
+				result.add(v) // 1-based.
+			}
+		} else {
+			result = { }
+			for (kv in this) {
+				var k = kv.key
+				var v = kv.value
+				if (k is LTable) {
+					k = k.toWren
+				}
+				if (v is LTable) {
+					v = v.toWren
+				}
+				result[k] = v
+			}
 		}
 
-		return _raw
+		return result
+	}
+
+	data_ {
+		if (_data == null) {
+			_data = { }
+		}
+
+		return _data
 	}
 
 	[index] {
-		if (raw_.containsKey(index)) {
-			return raw_[index]
+		if (data_.containsKey(index)) {
+			return data_[index]
 		}
 
 		return null
 	}
 	[index] = (value) {
 		if (value == null) {
-			if (raw_.containsKey(index)) {
-				raw_.remove(index)
+			if (data_.containsKey(index)) {
+				data_.remove(index)
 			}
 		} else {
-			raw_[index] = value
+			data_[index] = value
 			_length = -1
 		}
 	}
 
-	count { raw_.count }
+	count {
+		return data_.count
+	}
+	isEmpty {
+		return data_.isEmpty
+	}
+
+	containsKey(key) {
+		return data_.containsKey(key)
+	}
 
 	len__ {
 		if (_length == -1) {
-			for (i in 1..raw_.count) {
-				if (raw_.containsKey(i)) {
+			for (i in 1..data_.count) {
+				if (data_.containsKey(i)) {
 					_length = i // 1-based.
 				} else {
 					break
@@ -143,12 +180,12 @@ class LTable {
 	}
 
 	iterate(iterator) {
-		iterator = raw_.iterate(iterator)
+		iterator = data_.iterate(iterator)
 
 		return iterator
 	}
 	iteratorValue(iterator) {
-		return raw_.iteratorValue(iterator)
+		return data_.iteratorValue(iterator)
 	}
 } // `LTable`.
 // Table end.

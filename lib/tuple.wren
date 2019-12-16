@@ -55,6 +55,9 @@ class LTuple {
 	count {
 		return _args.count
 	}
+	isEmpty {
+		return _args.isEmpty
+	}
 
 	join(sep) {
 		return _args.join(sep)

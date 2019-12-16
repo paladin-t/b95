@@ -3602,6 +3602,9 @@ class Library {
 				"  count {\r\n" +
 				"    return _args.count\r\n" +
 				"  }\r\n" +
+				"  isEmpty {\r\n" +
+				"    return _args.isEmpty\r\n" +
+				"  }\r\n" +
 				"\r\n" +
 				"  join(sep) {\r\n" +
 				"    return _args.join(sep)\r\n" +
@@ -4296,10 +4299,10 @@ class Library {
 				"  }\r\n" +
 				"\r\n" +
 				"  toString {\r\n" +
-				"    if (len__ == raw_.count) {\r\n" +
+				"    if (len__ == data_.count) {\r\n" +
 				"      var result = \"\"\r\n" +
 				"      for (i in 1..len__) {\r\n" +
-				"        result = result + raw_[i].toString\r\n" +
+				"        result = result + data_[i].toString\r\n" +
 				"        if (i != len__) {\r\n" +
 				"          result = result + \", \"\r\n" +
 				"        }\r\n" +
@@ -4308,41 +4311,78 @@ class Library {
 				"      return \"{ \" + result + \" }\"\r\n" +
 				"    }\r\n" +
 				"\r\n" +
-				"    return raw_.toString\r\n" +
+				"    return data_.toString\r\n" +
 				"  }\r\n" +
-				"\r\n" +
-				"  raw_ {\r\n" +
-				"    if (_raw == null) {\r\n" +
-				"      _raw = { }\r\n" +
+				"  toWren {\r\n" +
+				"    var result = null\r\n" +
+				"    if (count == len__) {\r\n" +
+				"      result = [ ]\r\n" +
+				"      for (i in 0...count) {\r\n" +
+				"        var v = this[i + 1]\r\n" +
+				"        if (v is LTable) {\r\n" +
+				"          v = v.toWren\r\n" +
+				"        }\r\n" +
+				"        result.add(v) // 1-based.\r\n" +
+				"      }\r\n" +
+				"    } else {\r\n" +
+				"      result = { }\r\n" +
+				"      for (kv in this) {\r\n" +
+				"        var k = kv.key\r\n" +
+				"        var v = kv.value\r\n" +
+				"        if (k is LTable) {\r\n" +
+				"          k = k.toWren\r\n" +
+				"        }\r\n" +
+				"        if (v is LTable) {\r\n" +
+				"          v = v.toWren\r\n" +
+				"        }\r\n" +
+				"        result[k] = v\r\n" +
+				"      }\r\n" +
 				"    }\r\n" +
 				"\r\n" +
-				"    return _raw\r\n" +
+				"    return result\r\n" +
+				"  }\r\n" +
+				"\r\n" +
+				"  data_ {\r\n" +
+				"    if (_data == null) {\r\n" +
+				"      _data = { }\r\n" +
+				"    }\r\n" +
+				"\r\n" +
+				"    return _data\r\n" +
 				"  }\r\n" +
 				"\r\n" +
 				"  [index] {\r\n" +
-				"    if (raw_.containsKey(index)) {\r\n" +
-				"      return raw_[index]\r\n" +
+				"    if (data_.containsKey(index)) {\r\n" +
+				"      return data_[index]\r\n" +
 				"    }\r\n" +
 				"\r\n" +
 				"    return null\r\n" +
 				"  }\r\n" +
 				"  [index] = (value) {\r\n" +
 				"    if (value == null) {\r\n" +
-				"      if (raw_.containsKey(index)) {\r\n" +
-				"        raw_.remove(index)\r\n" +
+				"      if (data_.containsKey(index)) {\r\n" +
+				"        data_.remove(index)\r\n" +
 				"      }\r\n" +
 				"    } else {\r\n" +
-				"      raw_[index] = value\r\n" +
+				"      data_[index] = value\r\n" +
 				"      _length = -1\r\n" +
 				"    }\r\n" +
 				"  }\r\n" +
 				"\r\n" +
-				"  count { raw_.count }\r\n" +
+				"  count {\r\n" +
+				"    return data_.count\r\n" +
+				"  }\r\n" +
+				"  isEmpty {\r\n" +
+				"    return data_.isEmpty\r\n" +
+				"  }\r\n" +
+				"\r\n" +
+				"  containsKey(key) {\r\n" +
+				"    return data_.containsKey(key)\r\n" +
+				"  }\r\n" +
 				"\r\n" +
 				"  len__ {\r\n" +
 				"    if (_length == -1) {\r\n" +
-				"      for (i in 1..raw_.count) {\r\n" +
-				"        if (raw_.containsKey(i)) {\r\n" +
+				"      for (i in 1..data_.count) {\r\n" +
+				"        if (data_.containsKey(i)) {\r\n" +
 				"          _length = i // 1-based.\r\n" +
 				"        } else {\r\n" +
 				"          break\r\n" +
@@ -4354,12 +4394,12 @@ class Library {
 				"  }\r\n" +
 				"\r\n" +
 				"  iterate(iterator) {\r\n" +
-				"    iterator = raw_.iterate(iterator)\r\n" +
+				"    iterator = data_.iterate(iterator)\r\n" +
 				"\r\n" +
 				"    return iterator\r\n" +
 				"  }\r\n" +
 				"  iteratorValue(iterator) {\r\n" +
-				"    return raw_.iteratorValue(iterator)\r\n" +
+				"    return data_.iteratorValue(iterator)\r\n" +
 				"  }\r\n" +
 				"} // `LTable`.\r\n" +
 				"// Table end.\r\n" // Table lib.
