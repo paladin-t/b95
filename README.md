@@ -14,7 +14,7 @@ Compiling Lua code to Wren source code, then running it through Wren. Why not.
 
 ### 1. How it works
 
-Lua's dynamic typing and scripting nature is quite similar to Wren. The typing system, execution flow and memory management parts can be straightforward migrated. The main difference is that Wren uses a classy object model, Lua uses prototyping. But it's still translatable with a little bit wrought work.
+Lua's dynamic typing and scripting nature is quite similar to Wren. So the typing system, execution flow and memory management parts can be straightforward migrated. The main difference is that Wren uses a classy object model, but Lua uses prototyping. Anyway, it's still translatable with a little bit wrought work.
 
 #### 1.1 Syntax translation
 
@@ -52,9 +52,9 @@ Note: to unpack values properly from a tuple returned by some functions (eg. `co
 
 `obj:func()` compiles to `obj.func()`.
 
-`obj.func()` compiles to `obj.func.call()`.
+`obj.func()` compiles to `obj.func()`.
 
-Otherwise eg. with `obj["func"]()`, compiles to `obj.func.call()`.
+Otherwise eg. with `obj['func']()`, compiles to `obj['func'].call()`.
 
 Note: use `call(func, args)` to hint for `func.call(args)`; `apply(method, args)` to hint for `method(args)`.
 
@@ -64,7 +64,7 @@ Lua standard library is rewritten in Wren for B95's referencing. The source code
 
 #### 1.3 External registration
 
-Like many scripting languages, B95 allows external function registration to extend the language.
+Like many other scripting languages, B95 allows using external function registration to extend the language.
 
 ### 2. How to use
 
@@ -74,7 +74,7 @@ Like many scripting languages, B95 allows external function registration to exte
 
 Wren 0.2.0 or above.
 
-There's a Windows executable "wren.exe" in the root directory of this repository, which was prebuilt via VC++ 2015 without modification to the official code.
+There's a Windows executable "wren.exe" in the root directory of this repository, which was prebuilt via VC++ 2015 without modification to the official distribution.
 
 #### 2.2 Simple
 
@@ -123,7 +123,7 @@ Klass = class(
 
 		-- Function with `self` compiles to instance method.
 		func1 = function (self, c, d)
-			self["field0"] = c
+			self['field0'] = c
 			self.field1 = d
 		end
 	},
@@ -138,8 +138,8 @@ This is also valid Lua syntax, so that it's possible to write compatible code fo
 #### 2.5 Table
 
 ```lua
-tbl = { 1 = "uno", 2 = "dos", 3 = "thres" }
-tbl["key"] = "value"
+tbl = { 1 = 'uno', 2 = 'dos', 3 = 'thres' }
+tbl['key'] = 'value'
 
 for k, v in pairs(tbl) do
 	print(k, v)
@@ -151,7 +151,7 @@ print(length(tbl))
 #### 2.6 Importing
 
 ```lua
-obj = require "path"
+obj = require 'path'
 ```
 
 B95 invokes callback set by `B95.onRequire` during compile time for customized importing. Eg.
