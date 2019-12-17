@@ -175,11 +175,12 @@ class Except {
 	static SyntaxRParenthesisNotMatch(where) { Except.SyntaxSomethingNotMatch("')'", where) }
 	static SyntaxRBracketNotMatch(where) { Except.SyntaxSomethingNotMatch("']'", where) }
 	static SyntaxRBraceNotMatch(where) { Except.SyntaxSomethingNotMatch("'}'", where) }
-	static SyntaxConditionAndBranchNotMatch(where) { Except.SyntaxSomethingNotMatch("Condition and branch", where) }
 	static SyntaxSymbolAlreadyDefined(what, where) { Except.SyntaxSomethingAlreadyDefined(Format.new("Symbol {0}", what).toString, where) }
-	static SyntaxInvalidRange(where) { Format.new("Invalid range: {0}.", where).toString }
+	static SyntaxConditionAndBranchNotMatch(where) { Except.SyntaxSomethingNotMatch("Condition and branch", where) }
 	static SyntaxBreakOutsideLoop(where) { Format.new("Cannot use 'break' outside of a loop: {0}.", where).toString }
+	static SyntaxInvalidRange(where) { Format.new("Invalid range: {0}.", where).toString }
 	static SyntaxInvalidClass(where) { Format.new("Invalid class: {0}.", where).toString }
+	static SyntaxInvalidExpression(where) { Format.new("Invalid expression: {0}.", where).toString }
 }
 
 /* ========================================================} */
@@ -1773,13 +1774,19 @@ class CallNode is Node {
 
 		var result = ""
 		var id = getField(top.body)
-		var sym = id == null ? null : id.toCode(gen, 0, debug)
+		var tk = id == null || id.tokens.isEmpty ? null : id.tokens[0]
+		var sym = null
 		var start = 0
-		if (id == null) {
-			// Does nothing.
+		if (id != null && tk != null && TokenTypes.match(tk.type, TokenTypes.Identifier)) {
+			sym = id.toCode(gen, 0, debug)
+		}
+		if (sym == null) {
+			if (id != null && tk != null && TokenTypes.match(tk.type, TokenTypes.Operator) && Token.match(tk, [ ")", "]" ])) {
+				result = result + ".call"
+			}
 		} else if (sym == "Lua.apply") {
 			start = 1
-		} else if (sym) {
+		} else {
 			sym = gen.getSymbol(sym)
 			if (sym) {
 				if (SymbolTypes.match(sym.type, SymbolTypes.Function)) {
@@ -1825,7 +1832,7 @@ class CallNode is Node {
 		var result = null
 		if (index >= 0) {
 			var n = lst[index]
-			if (n is AtomNode && TokenTypes.match(n.tokens[0].type, TokenTypes.Identifier)) {
+			if (n is AtomNode && !n.tokens.isEmpty) {
 				result = n
 			}
 		}
@@ -2375,6 +2382,7 @@ class Parser {
 
 			return
 		}
+		var tk = token_
 		if (inline_(TokenTypes.Identifier, "require")) {
 			require_()
 		} else if (inline_(TokenTypes.Identifier, "class")) {
@@ -2403,6 +2411,9 @@ class Parser {
 			declaration_()
 		} else {
 			expressions_(false)
+		}
+		if (tk == token_) {
+			raise_(Except.SyntaxInvalidExpression(token_.begin))
 		}
 	}
 	require_() {
@@ -2637,6 +2648,7 @@ class Parser {
 	expression_() {
 		var y = TokenTypes.Meta | TokenTypes.Identifier | TokenTypes.Operator | TokenTypes.Nil | TokenTypes.False | TokenTypes.True | TokenTypes.Number | TokenTypes.String | TokenTypes.Newline
 
+		var tbl = peek_ is PrototypeNode || peek_ is TableNode
 		push_(ExpressionNode.new(), To.body)
 
 		var isCalc = Fn.new { | tk |
@@ -2710,7 +2722,11 @@ class Parser {
 
 				break
 			} else if (tkrbrace) {
-				break
+				if (tbl) {
+					break
+				} else {
+					raise_(Except.SyntaxRBraceNotMatch(token_.begin))
+				}
 			} else if (tkfun) {
 				function_()
 
@@ -2762,7 +2778,7 @@ class Parser {
 		var forwardFunction = Fn.new { tkfun = forward_(TokenTypes.Keyword, "function") }
 		var forwardConst = Fn.new { tkconst = forward_(TokenTypes.Keyword, [ "nil", "false", "true", "and", "or", "not" ]) }
 		var forwardSeparator = Fn.new { tksep = forward_(TokenTypes.Operator, ";") }
-		var forwardEof = Fn.new { tksep = forward_(TokenTypes.EndOfFile) }
+		var forwardEof = Fn.new { tkeof = forward_(TokenTypes.EndOfFile) }
 
 		forwardKeyword.call()
 		forwardFunction.call()
