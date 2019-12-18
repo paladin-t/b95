@@ -18,4 +18,4 @@ for y = 5, x, 2 do
 end
 a = a * 4
 
-print("Pi = ", a)
+print('Pi = ', a)

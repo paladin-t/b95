@@ -2,7 +2,7 @@ for i = 1, 3 do
 	print(i)
 end
 
-for i = 1, 6, 2, do
+for i = 1, 6, 2 do
 	print(i)
 end
 
@@ -10,11 +10,11 @@ for i = 3, 1 do
 	print(i)
 end
 
-for i, v in ipairs({ 1 = "uno", 2 = "dos", 3 = "thres", "key" = "value" }) do
+for i, v in ipairs({ 1 = 'uno', 2 = 'dos', 3 = 'thres', 'key' = 'value' }) do
 	print(i, v)
 end
 
-for k, v in pairs({ 1 = "uno", 2 = "dos", 3 = "thres", "key" = "value" }) do
+for k, v in pairs({ 1 = 'uno', 2 = 'dos', 3 = 'thres', 'key' = 'value' }) do
 	print(k, v)
 end
 

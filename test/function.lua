@@ -11,8 +11,8 @@ for i = 0, 10 do
 end
 
 local tbl = {
-	"func" = function ()
-		print("Function in table.")
+	func = function ()
+		print('Function in table.')
 	end
 }
-tbl["func"]()
+tbl['func']()

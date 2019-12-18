@@ -105,29 +105,29 @@ See `class Code` in "[b95.wren](b95.wren)" for details of the returned object by
 
 ```lua
 Klass = class(
-	{
-		-- Constructor `new` compiles to `construct new()`.
-		new = function ()
-		end,
+  {
+    -- Constructor `new` compiles to `construct new()`.
+    new = function ()
+    end,
 
-		-- Compiles to Wren getter/setter.
-		field0 = 0,
-		field1 = 1,
+    -- Compiles to Wren getter/setter.
+    field0 = 0,
+    field1 = 1,
 
-		-- Function without `self` compiles to static method.
-		func0 = function (a, b)
-			local c = a / b
+    -- Function without `self` compiles to static method.
+    func0 = function (a, b)
+      local c = a / b
 
-			return c
-		end,
+      return c
+    end,
 
-		-- Function with `self` compiles to instance method.
-		func1 = function (self, c, d)
-			self['field0'] = c
-			self.field1 = d
-		end
-	},
-	base -- Base class, optional.
+    -- Function with `self` compiles to instance method.
+    func1 = function (self, c, d)
+      self['field0'] = c
+      self.field1 = d
+    end
+  },
+  base -- Base class, optional.
 )
 
 obj = new(Klass) -- Instantiate a class, compiles to `Klass.new()`.
@@ -138,11 +138,11 @@ This is also valid Lua syntax, so that it's possible to write compatible code fo
 #### 2.5 Table
 
 ```lua
-tbl = { 1 = 'uno', 2 = 'dos', 3 = 'thres' }
+tbl = { 'uno', 'dos', 'thres' }
 tbl['key'] = 'value'
 
 for k, v in pairs(tbl) do
-	print(k, v)
+  print(k, v)
 end
 
 print(length(tbl))
@@ -158,13 +158,13 @@ B95 invokes callback set by `B95.onRequire` during compile time for customized i
 
 ```wren
 b95.onRequire(
-	Fn.new { | path, klass |
-		if (path == "bar" && klass == "foo") {
-			return "import \"path\" for module" // This replaces matched requirement.
-		}
+  Fn.new { | path, klass |
+    if (path == "bar" && klass == "foo") {
+      return "import \"path\" for module" // This replaces matched requirement.
+    }
 
-		return null
-	}
+    return null
+  }
 )
 ```
 
@@ -174,13 +174,13 @@ B95 invokes callback set by `B95.onFunction` during compile time for customized 
 
 ```wren
 b95.onFunction(
-	Fn.new { | module, func |
-		if (module == "foo" && func == "bar") {
-			return { "lib": null, "function": "lib.func" } // This replaces function invoking.
-		}
+  Fn.new { | module, func |
+    if (module == "foo" && func == "bar") {
+      return { "lib": null, "function": "lib.func" } // This replaces function invoking.
+    }
 
-		return null
-	}
+    return null
+  }
 )
 ```
 

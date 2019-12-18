@@ -11,7 +11,7 @@ Base = class(
 			return c
 		end,
 		func1 = function (self, c, d)
-			self["field0"] = c
+			self['field0'] = c
 			self.field1 = d
 		end
 	}
@@ -29,6 +29,6 @@ foo = new(Base)
 bar = new(Derived)
 
 foo:func1(1, 2)
-bar:func1("1", "2")
+bar:func1('1', '2')
 
 print(Base.func0(22, 7))

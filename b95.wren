@@ -831,6 +831,9 @@ class Node {
 	space(indent) {
 		return indent <= 0 ? "" : List.filled(indent, "  ").join("") // Indent with space.
 	}
+	quote(inner) {
+		return "\"" + inner + "\""
+	}
 
 	tag { "NODE" }
 	type { _type }
@@ -999,7 +1002,19 @@ class TableNode is Node {
 			for (i in 0...head.count) {
 				var k = head[i]
 				var v = body[i]
-				result = result + space(indent + 1) + k.toCode(gen, 0, debug)
+				var q = false
+				var kany = k.any
+				if (kany != null && kany.tokens.count == 1) {
+					if (TokenTypes.match(kany.tokens[0].type, TokenTypes.Identifier)) {
+						q = true
+					}
+				}
+				result = result + space(indent + 1)
+				if (q) {
+					result = result + quote(k.toCode(gen, 0, debug))
+				} else {
+					result = result + k.toCode(gen, 0, debug)
+				}
 				result = result + ": "
 				result = result + v.toCode(gen, 0, debug)
 				if (i < head.count - 1) {
