@@ -4510,8 +4510,20 @@ class Library {
 				"  static max(arg0, arg1, arg2) {\r\n" +
 				"    return max(max(arg0, arg1), arg2)\r\n" +
 				"  }\r\n" +
-				"  static max(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.\r\n" +
+				"  static max(arg0, arg1, arg2, arg3) {\r\n" +
 				"    return max(max(max(arg0, arg1), arg2), arg3)\r\n" +
+				"  }\r\n" +
+				"  static max(arg0, arg1, arg2, arg3, arg4) {\r\n" +
+				"    return max(max(max(max(arg0, arg1), arg2), arg3), arg4)\r\n" +
+				"  }\r\n" +
+				"  static max(arg0, arg1, arg2, arg3, arg4, arg5) {\r\n" +
+				"    return max(max(max(max(max(arg0, arg1), arg2), arg3), arg4), arg5)\r\n" +
+				"  }\r\n" +
+				"  static max(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
+				"    return max(max(max(max(max(max(arg0, arg1), arg2), arg3), arg4), arg5), arg6)\r\n" +
+				"  }\r\n" +
+				"  static max(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
+				"    return max(max(max(max(max(max(max(arg0, arg1), arg2), arg3), arg4), arg5), arg6), arg7)\r\n" +
 				"  }\r\n" +
 				"  static maxInteger {\r\n" +
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
@@ -4522,8 +4534,20 @@ class Library {
 				"  static min(arg0, arg1, arg2) {\r\n" +
 				"    return min(min(arg0, arg1), arg2)\r\n" +
 				"  }\r\n" +
-				"  static min(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.\r\n" +
+				"  static min(arg0, arg1, arg2, arg3) {\r\n" +
 				"    return min(min(min(arg0, arg1), arg2), arg3)\r\n" +
+				"  }\r\n" +
+				"  static min(arg0, arg1, arg2, arg3, arg4) {\r\n" +
+				"    return min(min(min(min(arg0, arg1), arg2), arg3), arg4)\r\n" +
+				"  }\r\n" +
+				"  static min(arg0, arg1, arg2, arg3, arg4, arg5) {\r\n" +
+				"    return min(min(min(min(min(arg0, arg1), arg2), arg3), arg4), arg5)\r\n" +
+				"  }\r\n" +
+				"  static min(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
+				"    return min(min(min(min(min(min(arg0, arg1), arg2), arg3), arg4), arg5), arg6)\r\n" +
+				"  }\r\n" +
+				"  static min(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
+				"    return min(min(min(min(min(min(min(arg0, arg1), arg2), arg3), arg4), arg5), arg6), arg7)\r\n" +
 				"  }\r\n" +
 				"  static minInteger {\r\n" +
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
@@ -4642,7 +4666,7 @@ class Library {
 				"call": { "lib": "syntax", "function": "Lua.call" },
 				"apply": { "lib": "syntax", "function": "Lua.apply" },
 
-				// TODO
+				// For constants in module `math`.
 				"huge": { "lib": "math", "function": "huge" },
 				"maxinteger": { "lib": "math", "function": "maxInteger" },
 				"mininteger": { "lib": "math", "function": "minInteger" },

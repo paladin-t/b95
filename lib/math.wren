@@ -52,8 +52,20 @@ class LMath {
 	static max(arg0, arg1, arg2) {
 		return max(max(arg0, arg1), arg2)
 	}
-	static max(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.
+	static max(arg0, arg1, arg2, arg3) {
 		return max(max(max(arg0, arg1), arg2), arg3)
+	}
+	static max(arg0, arg1, arg2, arg3, arg4) {
+		return max(max(max(max(arg0, arg1), arg2), arg3), arg4)
+	}
+	static max(arg0, arg1, arg2, arg3, arg4, arg5) {
+		return max(max(max(max(max(arg0, arg1), arg2), arg3), arg4), arg5)
+	}
+	static max(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+		return max(max(max(max(max(max(arg0, arg1), arg2), arg3), arg4), arg5), arg6)
+	}
+	static max(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
+		return max(max(max(max(max(max(max(arg0, arg1), arg2), arg3), arg4), arg5), arg6), arg7)
 	}
 	static maxInteger {
 		Fiber.abort("Not implemented.")
@@ -64,8 +76,20 @@ class LMath {
 	static min(arg0, arg1, arg2) {
 		return min(min(arg0, arg1), arg2)
 	}
-	static min(arg0, arg1, arg2, arg3) { // Supports up to 4 parameters.
+	static min(arg0, arg1, arg2, arg3) {
 		return min(min(min(arg0, arg1), arg2), arg3)
+	}
+	static min(arg0, arg1, arg2, arg3, arg4) {
+		return min(min(min(min(arg0, arg1), arg2), arg3), arg4)
+	}
+	static min(arg0, arg1, arg2, arg3, arg4, arg5) {
+		return min(min(min(min(min(arg0, arg1), arg2), arg3), arg4), arg5)
+	}
+	static min(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+		return min(min(min(min(min(min(arg0, arg1), arg2), arg3), arg4), arg5), arg6)
+	}
+	static min(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
+		return min(min(min(min(min(min(min(arg0, arg1), arg2), arg3), arg4), arg5), arg6), arg7)
 	}
 	static minInteger {
 		Fiber.abort("Not implemented.")
