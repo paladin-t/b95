@@ -621,6 +621,8 @@ class Lexer {
 			} else if (on_(LexStates.SinglelineComment)) {
 				transfer_(LexStates.Normal)
 				seal_()
+				token_(TokenTypes.Newline)
+				add_("\n")
 			}
 		}
 
@@ -3866,17 +3868,48 @@ class Library {
 				"  static rawSet(table, index, value) {\r\n" +
 				"    table[index] = value\r\n" +
 				"  }\r\n" +
+				"  static select_(index, argv) {\r\n" +
+				"    if (index == \"#\") {\r\n" +
+				"      return argv.count\r\n" +
+				"    }\r\n" +
+				"    var result = LTuple.new()\r\n" +
+				"    if (index == 0) {\r\n" +
+				"      return result\r\n" +
+				"    }\r\n" +
+				"    var s = index > 0 ? index - 1 : argv.count + index\r\n" +
+				"    if (s < 0) {\r\n" +
+				"      s = 0\r\n" +
+				"    }\r\n" +
+				"    result.ctor(argv.skip(s))\r\n" +
+				"\r\n" +
+				"    return result\r\n" +
+				"  }\r\n" +
+				"  static select(index) {\r\n" +
+				"    return select_(index, [ ])\r\n" +
+				"  }\r\n" +
 				"  static select(index, arg0) {\r\n" +
-				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"    return select_(index, [ arg0 ])\r\n" +
 				"  }\r\n" +
 				"  static select(index, arg0, arg1) {\r\n" +
-				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"    return select_(index, [ arg0, arg1 ])\r\n" +
 				"  }\r\n" +
 				"  static select(index, arg0, arg1, arg2) {\r\n" +
-				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"    return select_(index, [ arg0, arg1, arg2 ])\r\n" +
 				"  }\r\n" +
 				"  static select(index, arg0, arg1, arg2, arg3) {\r\n" +
-				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"    return select_(index, [ arg0, arg1, arg2, arg3 ])\r\n" +
+				"  }\r\n" +
+				"  static select(index, arg0, arg1, arg2, arg3, arg4) {\r\n" +
+				"    return select_(index, [ arg0, arg1, arg2, arg3, arg4 ])\r\n" +
+				"  }\r\n" +
+				"  static select(index, arg0, arg1, arg2, arg3, arg4, arg5) {\r\n" +
+				"    return select_(index, [ arg0, arg1, arg2, arg3, arg4, arg5 ])\r\n" +
+				"  }\r\n" +
+				"  static select(index, arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
+				"    return select_(index, [ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])\r\n" +
+				"  }\r\n" +
+				"  static select(index, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
+				"    return select_(index, [ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])\r\n" +
 				"  }\r\n" +
 				"  static setMetatable(table, metatable) {\r\n" +
 				"    Fiber.abort(\"Not implemented.\")\r\n" +

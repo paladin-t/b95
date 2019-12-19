@@ -214,17 +214,48 @@ class Lua {
 	static rawSet(table, index, value) {
 		table[index] = value
 	}
+	static select_(index, argv) {
+		if (index == "#") {
+			return argv.count
+		}
+		var result = LTuple.new()
+		if (index == 0) {
+			return result
+		}
+		var s = index > 0 ? index - 1 : argv.count + index
+		if (s < 0) {
+			s = 0
+		}
+		result.ctor(argv.skip(s))
+
+		return result
+	}
+	static select(index) {
+		return select_(index, [ ])
+	}
 	static select(index, arg0) {
-		Fiber.abort("Not implemented.")
+		return select_(index, [ arg0 ])
 	}
 	static select(index, arg0, arg1) {
-		Fiber.abort("Not implemented.")
+		return select_(index, [ arg0, arg1 ])
 	}
 	static select(index, arg0, arg1, arg2) {
-		Fiber.abort("Not implemented.")
+		return select_(index, [ arg0, arg1, arg2 ])
 	}
 	static select(index, arg0, arg1, arg2, arg3) {
-		Fiber.abort("Not implemented.")
+		return select_(index, [ arg0, arg1, arg2, arg3 ])
+	}
+	static select(index, arg0, arg1, arg2, arg3, arg4) {
+		return select_(index, [ arg0, arg1, arg2, arg3, arg4 ])
+	}
+	static select(index, arg0, arg1, arg2, arg3, arg4, arg5) {
+		return select_(index, [ arg0, arg1, arg2, arg3, arg4, arg5 ])
+	}
+	static select(index, arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+		return select_(index, [ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])
+	}
+	static select(index, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
+		return select_(index, [ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])
 	}
 	static setMetatable(table, metatable) {
 		Fiber.abort("Not implemented.")

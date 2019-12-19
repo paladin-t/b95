@@ -216,6 +216,7 @@ b95.onFunction(
 | `//` | ✓ | |
 | `==`, `~=`, `<=`, `>=`, `<`, `>` | ✓ | ✓ |
 | `&`, `~`, `<<`, `>>` | ✓ | ✓ |
+| `...` | ✓ | |
 | `-- comment` | ✓ | ✓ |
 | `--[[ multiline`<br />`comment --]]` | ✓ | ✓ |
 | `require` | ✓ | ✓ |
@@ -233,35 +234,35 @@ b95.onFunction(
 | `loadfile([filename [, mode [, env]]])` | ✓ | |
 | `next(table [, index])` | ✓ | ✓ (not recommended) |
 | `pairs(t)` | ✓ | ✓ |
-| `pcall(f [, arg1, ···])` | ✓ | |
-| `print(···)` | ✓ | ✓ |
+| `pcall(f [, arg1, ...])` | ✓ | |
+| `print(...)` | ✓ | ✓ |
 | `rawequal(v1, v2)` | ✓ | ✓ |
 | `rawget(table, index)` | ✓ | ✓ |
 | `rawlen(v)` | ✓ | ✓ |
 | `rawset(table, index, value)` | ✓ | ✓ |
-| `select(index, ···)` | ✓ | |
+| `select(index, ...)` | ✓ | ✓ (partial) |
 | `setmetatable(table, metatable)` | ✓ | |
 | `tonumber(e [, base])` | ✓ | ✓ (partial) |
 | `tostring(v)` | ✓ | ✓ |
 | `type(v)` | ✓ | ✓ |
 | `coroutine.create(f)` | ✓ | ✓ |
 | `coroutine.isyieldable()` | ✓ | ✓ |
-| `coroutine.resume(co [, val1, ···])` | ✓ | ✓ |
+| `coroutine.resume(co [, val1, ...])` | ✓ | ✓ |
 | `coroutine.running()` | ✓ | ✓ |
 | `coroutine.status(co)` | ✓ | |
 | `coroutine.wrap(f)` | ✓ | |
-| `coroutine.yield(···)` | ✓ | ✓ |
+| `coroutine.yield(...)` | ✓ | ✓ |
 | `string.byte(s [, i [, j]])` | ✓ | ✓ |
-| `string.char(···)` | ✓ | ✓ |
+| `string.char(...)` | ✓ | ✓ |
 | `string.dump(function [, strip])` | ✓ | |
 | `string.find(s, pattern [, init [, plain]])` | ✓ | |
-| `string.format(formatstring, ···)` | ✓ | |
+| `string.format(formatstring, ...)` | ✓ | |
 | `string.gmatch(s, pattern)` | ✓ | |
 | `string.gsub(s, pattern, repl [, n])` | ✓ | |
 | `string.len(s)` | ✓ | ✓ |
 | `string.lower(s)` | ✓ | ✓ |
 | `string.match(s, pattern [, init])` | ✓ | |
-| `string.pack(fmt, v1, v2, ···)` | ✓ | |
+| `string.pack(fmt, v1, v2, ...)` | ✓ | |
 | `string.packsize(fmt)` | ✓ | |
 | `string.rep(s, n [, sep])` | ✓ | ✓ |
 | `string.reverse(s)` | ✓ | ✓ |
@@ -271,8 +272,8 @@ b95.onFunction(
 | `utf8` | ✓ | |
 | `table.concat(list [, sep [, i [, j]]])` | ✓ | ✓ |
 | `table.insert(list, [pos,] value)` | ✓ | ✓ |
-| `table.move(a1, f, e, t [,a2])` | ✓ | |
-| `table.pack(···)` | ✓ | |
+| `table.move(a1, f, e, t [, a2])` | ✓ | |
+| `table.pack(...)` | ✓ | |
 | `table.remove(list [, pos])` | ✓ | ✓ |
 | `table.sort(list [, comp])` | ✓ | |
 | `table.unpack(list [, i [, j]])` | ✓ | |
@@ -288,9 +289,9 @@ b95.onFunction(
 | `math.fmod(x, y)` | ✓ | ✓ |
 | `math.huge` | ✓ | ✓ |
 | `math.log(x [, base])` | ✓ | ✓ |
-| `math.max(x, ···)` | ✓ | ✓ |
+| `math.max(x, ...)` | ✓ | ✓ |
 | `math.maxinteger` | ✓ | |
-| `math.min(x, ···)` | ✓ | ✓ |
+| `math.min(x, ...)` | ✓ | ✓ |
 | `math.mininteger` | ✓ | |
 | `math.modf(x)` | ✓ | ✓ |
 | `math.pi` | ✓ | ✓ |
