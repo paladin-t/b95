@@ -118,13 +118,13 @@ class LMath {
 		return __random
 	}
 	static random() {
-		return LMath.random.float()
+		return random.float()
 	}
 	static random(n) {
-		return LMath.random(1, n)
+		return random(1, n)
 	}
 	static random(m, n) {
-		return LMath.random.int(m, n + 1)
+		return random.int(m, n + 1)
 	}
 	static randomSeed(x) {
 		__random = Random.new(x)

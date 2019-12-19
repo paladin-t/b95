@@ -10,14 +10,6 @@ for i = 3, 1 do
 	print(i)
 end
 
-for i, v in ipairs({ 1 = 'uno', 2 = 'dos', 3 = 'thres', 'key' = 'value' }) do
-	print(i, v)
-end
-
-for k, v in pairs({ 1 = 'uno', 2 = 'dos', 3 = 'thres', 'key' = 'value' }) do
-	print(k, v)
-end
-
 i = 3
 while i >= 1 do
 	print(i)
@@ -32,3 +24,20 @@ repeat
 		break
 	end
 until false
+
+tbl = { 'uno', 'dos', 'thres' }
+tbl['key'] = 'value'
+
+for i, v in ipairs(tbl) do
+	print(i, v)
+end
+
+for k, v in pairs(tbl) do
+	print(k, v)
+end
+
+k, v = next(tbl, nil)
+while k do
+	print(k, v)
+	k, v = next(tbl, k)
+end

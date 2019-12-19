@@ -3728,7 +3728,7 @@ class Library {
 				"  }\r\n" +
 				"\r\n" +
 				"  static assert(v) {\r\n" +
-				"    Lua.assert(v, \"Assertion.\")\r\n" +
+				"    assert(v, \"Assertion.\")\r\n" +
 				"  }\r\n" +
 				"  static assert(v, message) {\r\n" +
 				"    if (!v) {\r\n" +
@@ -3748,7 +3748,7 @@ class Library {
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
 				"  }\r\n" +
 				"  static error(message) {\r\n" +
-				"    Lua.error(message, 0)\r\n" +
+				"    error(message, 0)\r\n" +
 				"  }\r\n" +
 				"  static error(message, level) {\r\n" +
 				"    Fiber.abort(message)\r\n" +
@@ -3781,10 +3781,28 @@ class Library {
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
 				"  }\r\n" +
 				"  static next(table) {\r\n" +
-				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"    return next(table, null)\r\n" +
 				"  }\r\n" +
 				"  static next(table, index) {\r\n" +
-				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"    var iterator = table.iterate(null)\r\n" +
+				"    if (!iterator) {\r\n" +
+				"      return LTuple.new(null, null)\r\n" +
+				"    }\r\n" +
+				"    var kv = table.iteratorValue(iterator)\r\n" +
+				"    if (index != null) {\r\n" +
+				"      while (kv.key != index) {\r\n" +
+				"        iterator = table.iterate(iterator)\r\n" +
+				"        kv = table.iteratorValue(iterator)\r\n" +
+				"      }\r\n" +
+				"      iterator = table.iterate(iterator)\r\n" +
+				"      if (iterator) {\r\n" +
+				"        kv = table.iteratorValue(iterator)\r\n" +
+				"      } else {\r\n" +
+				"        return LTuple.new(null, null)\r\n" +
+				"      }\r\n" +
+				"    }\r\n" +
+				"\r\n" +
+				"    return LTuple.new(kv.key, kv.value)\r\n" +
 				"  }\r\n" +
 				"  static pcall(f) {\r\n" +
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
@@ -3813,28 +3831,28 @@ class Library {
 				"    System.print(argv.join(\"\t\"))\r\n" +
 				"  }\r\n" +
 				"  static print(arg0) {\r\n" +
-				"    Lua.print_([ arg0 ])\r\n" +
+				"    print_([ arg0 ])\r\n" +
 				"  }\r\n" +
 				"  static print(arg0, arg1) {\r\n" +
-				"    Lua.print_([ arg0, arg1 ])\r\n" +
+				"    print_([ arg0, arg1 ])\r\n" +
 				"  }\r\n" +
 				"  static print(arg0, arg1, arg2) {\r\n" +
-				"    Lua.print_([ arg0, arg1, arg2 ])\r\n" +
+				"    print_([ arg0, arg1, arg2 ])\r\n" +
 				"  }\r\n" +
 				"  static print(arg0, arg1, arg2, arg3) {\r\n" +
-				"    Lua.print_([ arg0, arg1, arg2, arg3 ])\r\n" +
+				"    print_([ arg0, arg1, arg2, arg3 ])\r\n" +
 				"  }\r\n" +
 				"  static print(arg0, arg1, arg2, arg3, arg4) {\r\n" +
-				"    Lua.print_([ arg0, arg1, arg2, arg3, arg4 ])\r\n" +
+				"    print_([ arg0, arg1, arg2, arg3, arg4 ])\r\n" +
 				"  }\r\n" +
 				"  static print(arg0, arg1, arg2, arg3, arg4, arg5) {\r\n" +
-				"    Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5 ])\r\n" +
+				"    print_([ arg0, arg1, arg2, arg3, arg4, arg5 ])\r\n" +
 				"  }\r\n" +
 				"  static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
-				"    Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])\r\n" +
+				"    print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])\r\n" +
 				"  }\r\n" +
 				"  static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
-				"    Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])\r\n" +
+				"    print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])\r\n" +
 				"  }\r\n" +
 				"  static rawEqual(v1, v2) {\r\n" +
 				"    return v1 == v2\r\n" +
@@ -4090,10 +4108,10 @@ class Library {
 				"// String begin.\r\n" +
 				"class LString {\r\n" +
 				"  static byte(s) {\r\n" +
-				"    return LString.byte(s, 1)\r\n" +
+				"    return byte(s, 1)\r\n" +
 				"  }\r\n" +
 				"  static byte(s, i) {\r\n" +
-				"    return LString.byte(s, i, i)[1]\r\n" +
+				"    return byte(s, i, i)[1]\r\n" +
 				"  }\r\n" +
 				"  static byte(s, i, j) {\r\n" +
 				"    return LTable.new(\r\n" +
@@ -4107,25 +4125,25 @@ class Library {
 				"    return String.fromCodePoint(arg0)\r\n" +
 				"  }\r\n" +
 				"  static char(arg0, arg1) {\r\n" +
-				"    return LString.char(arg0) + String.fromCodePoint(arg1)\r\n" +
+				"    return char(arg0) + String.fromCodePoint(arg1)\r\n" +
 				"  }\r\n" +
 				"  static char(arg0, arg1, arg2) {\r\n" +
-				"    return LString.char(arg0, arg1) + String.fromCodePoint(arg2)\r\n" +
+				"    return char(arg0, arg1) + String.fromCodePoint(arg2)\r\n" +
 				"  }\r\n" +
 				"  static char(arg0, arg1, arg2, arg3) {\r\n" +
-				"    return LString.char(arg0, arg1, arg2) + String.fromCodePoint(arg3)\r\n" +
+				"    return char(arg0, arg1, arg2) + String.fromCodePoint(arg3)\r\n" +
 				"  }\r\n" +
 				"  static char(arg0, arg1, arg2, arg3, arg4) {\r\n" +
-				"    return LString.char(arg0, arg1, arg2, arg3) + String.fromCodePoint(arg4)\r\n" +
+				"    return char(arg0, arg1, arg2, arg3) + String.fromCodePoint(arg4)\r\n" +
 				"  }\r\n" +
 				"  static char(arg0, arg1, arg2, arg3, arg4, arg5) {\r\n" +
-				"    return LString.char(arg0, arg1, arg2, arg3, arg4) + String.fromCodePoint(arg5)\r\n" +
+				"    return char(arg0, arg1, arg2, arg3, arg4) + String.fromCodePoint(arg5)\r\n" +
 				"  }\r\n" +
 				"  static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
-				"    return LString.char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)\r\n" +
+				"    return char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)\r\n" +
 				"  }\r\n" +
 				"  static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
-				"    return LString.char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)\r\n" +
+				"    return char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)\r\n" +
 				"  }\r\n" +
 				"  static dump(function) {\r\n" +
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
@@ -4193,7 +4211,7 @@ class Library {
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
 				"  }\r\n" +
 				"  static rep(s, n) {\r\n" +
-				"    return LString.rep(s, n, \"\")\r\n" +
+				"    return rep(s, n, \"\")\r\n" +
 				"  }\r\n" +
 				"  static rep(s, n, sep) {\r\n" +
 				"    var result = \"\"\r\n" +
@@ -4215,7 +4233,7 @@ class Library {
 				"    return result\r\n" +
 				"  }\r\n" +
 				"  static sub(s, i) {\r\n" +
-				"    return LString.sub(s, i, s.count)\r\n" +
+				"    return sub(s, i, s.count)\r\n" +
 				"  }\r\n" +
 				"  static sub(s, i, j) {\r\n" +
 				"    return s.take(j).skip(i - 1).join(\"\")\r\n" +
@@ -4250,13 +4268,13 @@ class Library {
 				"// Table begin.\r\n" +
 				"class LTable {\r\n" +
 				"  static concat(list) {\r\n" +
-				"    return LTable.concat(list, \"\")\r\n" +
+				"    return concat(list, \"\")\r\n" +
 				"  }\r\n" +
 				"  static concat(list, sep) {\r\n" +
-				"    return LTable.concat(list, sep, 1)\r\n" +
+				"    return concat(list, sep, 1)\r\n" +
 				"  }\r\n" +
 				"  static concat(list, sep, i) {\r\n" +
-				"    return LTable.concat(list, sep, i, list.len__)\r\n" +
+				"    return concat(list, sep, i, list.len__)\r\n" +
 				"  }\r\n" +
 				"  static concat(list, sep, i, j) {\r\n" +
 				"    var result = \"\"\r\n" +
@@ -4270,7 +4288,7 @@ class Library {
 				"    return result\r\n" +
 				"  }\r\n" +
 				"  static insert(list, value) {\r\n" +
-				"    return LTable.insert(list, list.len__ + 1, value)\r\n" +
+				"    return insert(list, list.len__ + 1, value)\r\n" +
 				"  }\r\n" +
 				"  static insert(list, pos, value) {\r\n" +
 				"    list[pos] = value\r\n" +
@@ -4285,7 +4303,7 @@ class Library {
 				"    Fiber.abort(\"Not implemented.\")\r\n" +
 				"  }\r\n" +
 				"  static remove(list) {\r\n" +
-				"    return LTable.remove(list, list.len__)\r\n" +
+				"    return remove(list, list.len__)\r\n" +
 				"  }\r\n" +
 				"  static remove(list, pos) {\r\n" +
 				"    var len = list.len__\r\n" +
@@ -4576,13 +4594,13 @@ class Library {
 				"    return __random\r\n" +
 				"  }\r\n" +
 				"  static random() {\r\n" +
-				"    return LMath.random.float()\r\n" +
+				"    return random.float()\r\n" +
 				"  }\r\n" +
 				"  static random(n) {\r\n" +
-				"    return LMath.random(1, n)\r\n" +
+				"    return random(1, n)\r\n" +
 				"  }\r\n" +
 				"  static random(m, n) {\r\n" +
-				"    return LMath.random.int(m, n + 1)\r\n" +
+				"    return random.int(m, n + 1)\r\n" +
 				"  }\r\n" +
 				"  static randomSeed(x) {\r\n" +
 				"    __random = Random.new(x)\r\n" +

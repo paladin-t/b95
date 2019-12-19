@@ -1,10 +1,10 @@
 // String begin.
 class LString {
 	static byte(s) {
-		return LString.byte(s, 1)
+		return byte(s, 1)
 	}
 	static byte(s, i) {
-		return LString.byte(s, i, i)[1]
+		return byte(s, i, i)[1]
 	}
 	static byte(s, i, j) {
 		return LTable.new(
@@ -18,25 +18,25 @@ class LString {
 		return String.fromCodePoint(arg0)
 	}
 	static char(arg0, arg1) {
-		return LString.char(arg0) + String.fromCodePoint(arg1)
+		return char(arg0) + String.fromCodePoint(arg1)
 	}
 	static char(arg0, arg1, arg2) {
-		return LString.char(arg0, arg1) + String.fromCodePoint(arg2)
+		return char(arg0, arg1) + String.fromCodePoint(arg2)
 	}
 	static char(arg0, arg1, arg2, arg3) {
-		return LString.char(arg0, arg1, arg2) + String.fromCodePoint(arg3)
+		return char(arg0, arg1, arg2) + String.fromCodePoint(arg3)
 	}
 	static char(arg0, arg1, arg2, arg3, arg4) {
-		return LString.char(arg0, arg1, arg2, arg3) + String.fromCodePoint(arg4)
+		return char(arg0, arg1, arg2, arg3) + String.fromCodePoint(arg4)
 	}
 	static char(arg0, arg1, arg2, arg3, arg4, arg5) {
-		return LString.char(arg0, arg1, arg2, arg3, arg4) + String.fromCodePoint(arg5)
+		return char(arg0, arg1, arg2, arg3, arg4) + String.fromCodePoint(arg5)
 	}
 	static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
-		return LString.char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)
+		return char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)
 	}
 	static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
-		return LString.char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)
+		return char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)
 	}
 	static dump(function) {
 		Fiber.abort("Not implemented.")
@@ -104,7 +104,7 @@ class LString {
 		Fiber.abort("Not implemented.")
 	}
 	static rep(s, n) {
-		return LString.rep(s, n, "")
+		return rep(s, n, "")
 	}
 	static rep(s, n, sep) {
 		var result = ""
@@ -126,7 +126,7 @@ class LString {
 		return result
 	}
 	static sub(s, i) {
-		return LString.sub(s, i, s.count)
+		return sub(s, i, s.count)
 	}
 	static sub(s, i, j) {
 		return s.take(j).skip(i - 1).join("")

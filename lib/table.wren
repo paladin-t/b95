@@ -1,13 +1,13 @@
 // Table begin.
 class LTable {
 	static concat(list) {
-		return LTable.concat(list, "")
+		return concat(list, "")
 	}
 	static concat(list, sep) {
-		return LTable.concat(list, sep, 1)
+		return concat(list, sep, 1)
 	}
 	static concat(list, sep, i) {
-		return LTable.concat(list, sep, i, list.len__)
+		return concat(list, sep, i, list.len__)
 	}
 	static concat(list, sep, i, j) {
 		var result = ""
@@ -21,7 +21,7 @@ class LTable {
 		return result
 	}
 	static insert(list, value) {
-		return LTable.insert(list, list.len__ + 1, value)
+		return insert(list, list.len__ + 1, value)
 	}
 	static insert(list, pos, value) {
 		list[pos] = value
@@ -36,7 +36,7 @@ class LTable {
 		Fiber.abort("Not implemented.")
 	}
 	static remove(list) {
-		return LTable.remove(list, list.len__)
+		return remove(list, list.len__)
 	}
 	static remove(list, pos) {
 		var len = list.len__

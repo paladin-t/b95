@@ -76,7 +76,7 @@ class Lua {
 	}
 
 	static assert(v) {
-		Lua.assert(v, "Assertion.")
+		assert(v, "Assertion.")
 	}
 	static assert(v, message) {
 		if (!v) {
@@ -96,7 +96,7 @@ class Lua {
 		Fiber.abort("Not implemented.")
 	}
 	static error(message) {
-		Lua.error(message, 0)
+		error(message, 0)
 	}
 	static error(message, level) {
 		Fiber.abort(message)
@@ -129,10 +129,28 @@ class Lua {
 		Fiber.abort("Not implemented.")
 	}
 	static next(table) {
-		Fiber.abort("Not implemented.")
+		return next(table, null)
 	}
 	static next(table, index) {
-		Fiber.abort("Not implemented.")
+		var iterator = table.iterate(null)
+		if (!iterator) {
+			return LTuple.new(null, null)
+		}
+		var kv = table.iteratorValue(iterator)
+		if (index != null) {
+			while (kv.key != index) {
+				iterator = table.iterate(iterator)
+				kv = table.iteratorValue(iterator)
+			}
+			iterator = table.iterate(iterator)
+			if (iterator) {
+				kv = table.iteratorValue(iterator)
+			} else {
+				return LTuple.new(null, null)
+			}
+		}
+
+		return LTuple.new(kv.key, kv.value)
 	}
 	static pcall(f) {
 		Fiber.abort("Not implemented.")
@@ -161,28 +179,28 @@ class Lua {
 		System.print(argv.join("\t"))
 	}
 	static print(arg0) {
-		Lua.print_([ arg0 ])
+		print_([ arg0 ])
 	}
 	static print(arg0, arg1) {
-		Lua.print_([ arg0, arg1 ])
+		print_([ arg0, arg1 ])
 	}
 	static print(arg0, arg1, arg2) {
-		Lua.print_([ arg0, arg1, arg2 ])
+		print_([ arg0, arg1, arg2 ])
 	}
 	static print(arg0, arg1, arg2, arg3) {
-		Lua.print_([ arg0, arg1, arg2, arg3 ])
+		print_([ arg0, arg1, arg2, arg3 ])
 	}
 	static print(arg0, arg1, arg2, arg3, arg4) {
-		Lua.print_([ arg0, arg1, arg2, arg3, arg4 ])
+		print_([ arg0, arg1, arg2, arg3, arg4 ])
 	}
 	static print(arg0, arg1, arg2, arg3, arg4, arg5) {
-		Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5 ])
+		print_([ arg0, arg1, arg2, arg3, arg4, arg5 ])
 	}
 	static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
-		Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])
+		print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6 ])
 	}
 	static print(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
-		Lua.print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])
+		print_([ arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7 ])
 	}
 	static rawEqual(v1, v2) {
 		return v1 == v2

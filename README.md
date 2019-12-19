@@ -231,7 +231,7 @@ b95.onFunction(
 | `ipairs(t)` | ✓ | ✓ |
 | `load(chunk [, chunkname [, mode [, env]]])` | ✓ | |
 | `loadfile([filename [, mode [, env]]])` | ✓ | |
-| `next(table [, index])` | ✓ | |
+| `next(table [, index])` | ✓ | ✓ (not recommended) |
 | `pairs(t)` | ✓ | ✓ |
 | `pcall(f [, arg1, ···])` | ✓ | |
 | `print(···)` | ✓ | ✓ |
