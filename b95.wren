@@ -1140,7 +1140,7 @@ class PrototypeNode is Node {
 		} else if (Token.match(tk, "__pow")) {
 			gen.raise(Except.SyntaxNotImplemented("'__pow'", tokens[0].begin))
 		} else if (Token.match(tk, "__unm")) {
-			gen.raise(Except.SyntaxNotImplemented("'__unm'", tokens[0].begin))
+			str = "-"
 		} else if (Token.match(tk, "__idiv")) {
 			gen.raise(Except.SyntaxNotImplemented("'__idiv'", tokens[0].begin))
 		} else if (Token.match(tk, "__band")) {
@@ -1148,19 +1148,19 @@ class PrototypeNode is Node {
 		} else if (Token.match(tk, "__bor")) {
 			str = "|"
 		} else if (Token.match(tk, "__bxor")) {
-			gen.raise(Except.SyntaxNotImplemented("'__bxor'", tokens[0].begin))
+			str = "^"
 		} else if (Token.match(tk, "__bnot")) {
 			gen.raise(Except.SyntaxNotImplemented("'__bnot'", tokens[0].begin))
 		} else if (Token.match(tk, "__shl")) {
-			gen.raise(Except.SyntaxNotImplemented("'__shl'", tokens[0].begin))
+			str = "<<"
 		} else if (Token.match(tk, "__shr")) {
-			gen.raise(Except.SyntaxNotImplemented("'__shr'", tokens[0].begin))
+			str = ">>"
 		} else if (Token.match(tk, "__concat")) {
 			str = "+"
 		} else if (Token.match(tk, "__len")) {
 			str = "len__"
 		} else if (Token.match(tk, "__eq")) {
-			gen.raise(Except.SyntaxNotImplemented("'__eq'", tokens[0].begin))
+			str = "=="
 		} else if (Token.match(tk, "__lt")) {
 			str = "<"
 		} else if (Token.match(tk, "__le")) {
@@ -2191,12 +2191,12 @@ class AtomNode is Node {
 					str = "+"
 				} else if (Token.match(tk, "~=")) {
 					str = "!="
-				} else if (Token.match(tk, "#")) {
-					gen.raise(Except.SyntaxNotImplemented("'#'", tokens[0].begin))
 				} else if (Token.match(tk, "~")) {
-					gen.raise(Except.SyntaxNotImplemented("'~'", tokens[0].begin))
+					str = "^"
 				} else if (Token.match(tk, "^")) {
 					gen.raise(Except.SyntaxNotImplemented("'^'", tokens[0].begin))
+				} else if (Token.match(tk, "#")) {
+					gen.raise(Except.SyntaxNotImplemented("'#'", tokens[0].begin))
 				}
 			} else if (TokenTypes.match(tk.type, TokenTypes.Meta)) {
 				str = str.skip(2).join("") + "__" // Transforms meta signature `__*` to `*__`.
