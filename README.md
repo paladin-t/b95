@@ -64,7 +64,7 @@ Lua standard library is rewritten in Wren for B95's referencing. The source code
 
 #### 1.3 External registration
 
-Like many other scripting languages, B95 allows using external function registration to extend the language.
+Like widespread scripting languages, B95 allows using external function registration to extend the language.
 
 ### 2. How to use
 
@@ -133,7 +133,7 @@ Klass = class(
 obj = new(Klass) -- Instantiate a class, compiles to `Klass.new()`.
 ```
 
-This is also valid Lua syntax, so that it's possible to write compatible code for both B95 and C-Lua.
+This is also valid Lua syntax, so that it's possible to write compatible code both in B95 and (with the help of "[util/syntax.lua](util/syntax.lua)") in C-LUA.
 
 #### 2.5 Table
 

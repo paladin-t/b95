@@ -1,6 +1,6 @@
 Base = class(
 	{
-		new = function ()
+		new = function (self)
 		end,
 
 		field0 = 0,
@@ -19,7 +19,7 @@ Base = class(
 
 Derived = class(
 	{
-		new = function()
+		new = function (self)
 		end
 	},
 	Base
