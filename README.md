@@ -2,7 +2,7 @@
 
 **A [Lua](http://www.lua.org/) to [Wren](http://wren.io/) compiler in Wren**
 
-This library was born from the idea of using Lua in a Wren project. There are not many ways possible:
+This library was born from the idea of using Lua in Wren project. There are not many ways possible:
 
 Making both Lua and Wren bindings at the native side. Requires extra coding; cannot use Wren objects from Lua, vice versa.
 
@@ -107,7 +107,7 @@ See `class Code` in "[b95.wren](b95.wren)" for details of the returned object by
 Klass = class(
   {
     -- Constructor `new` compiles to `construct new()`.
-    new = function ()
+    new = function (self)
     end,
 
     -- Compiles to Wren getter/setter.
