@@ -34,7 +34,7 @@ a = tmp_0[0]
 b = tmp_0[1]
 ```
 
-Note: to unpack values properly from a tuple returned by some functions (eg. `coroutine.yield`), add an extra variable on the left side of assign operator to hint tuple unpacking. Eg. `dummy` in `somevar, dummy = coroutine.yield(1, 2)`. Otherwise a single variable would get returned tuple object per se.
+Note: to unpack values properly from a tuple returned by some functions (eg. `coroutine.yield`), add an extra variable on the left side of assign operator to hint tuple unpacking. Eg. `_` in `somevar, _ = coroutine.yield(1, 2)`. Otherwise a single variable would get returned tuple object per se.
 
 **Function definition**
 

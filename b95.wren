@@ -1435,6 +1435,9 @@ class ParameterNode is Node {
 		gen.context.push(this)
 
 		var result = tokens[0].data.toString
+		if (result == "_") {
+			result = "dummy_"
+		}
 
 		gen.context.pop()
 
@@ -2213,6 +2216,8 @@ class AtomNode is Node {
 			} else if (TokenTypes.match(tk.type, TokenTypes.Identifier)) {
 				if (Token.match(tk, "self")) {
 					str = "this"
+				} else if (Token.match(tk, "_")) {
+					str = "dummy_"
 				}
 			}
 			result = result + str

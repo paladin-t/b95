@@ -5,7 +5,7 @@ co = coroutine.create(
 		tempvar3 = 10
 		print('Coroutine section 1', value1, value2, tempvar3)
 
-		tempvar1, tmp = coroutine.yield(value1 + 1, value2 + 1)
+		tempvar1, _ = coroutine.yield(value1 + 1, value2 + 1)
 		tempvar3 = tempvar3 + value1
 		print('Coroutine section 2', tempvar1, tempvar2, tempvar3)
 
