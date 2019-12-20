@@ -52,6 +52,31 @@ class LTuple {
 		_args[index] = value
 	}
 
+	== (other) {
+		if (!(other is LTuple) || count != other.count) {
+			return false
+		}
+		for (i in 0...count) {
+			if (this[i] != other[i]) {
+				return false
+			}
+		}
+
+		return true
+	}
+	!= (other) {
+		if (!(other is LTuple) || count != other.count) {
+			return true
+		}
+		for (i in 0...count) {
+			if (this[i] != other[i]) {
+				return true
+			}
+		}
+
+		return false
+	}
+
 	count {
 		return _args.count
 	}

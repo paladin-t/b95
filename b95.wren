@@ -3632,6 +3632,31 @@ class Library {
 				"    _args[index] = value\r\n" +
 				"  }\r\n" +
 				"\r\n" +
+				"  == (other) {\r\n" +
+				"    if (!(other is LTuple) || count != other.count) {\r\n" +
+				"      return false\r\n" +
+				"    }\r\n" +
+				"    for (i in 0...count) {\r\n" +
+				"      if (this[i] != other[i]) {\r\n" +
+				"        return false\r\n" +
+				"      }\r\n" +
+				"    }\r\n" +
+				"\r\n" +
+				"    return true\r\n" +
+				"  }\r\n" +
+				"  != (other) {\r\n" +
+				"    if (!(other is LTuple) || count != other.count) {\r\n" +
+				"      return true\r\n" +
+				"    }\r\n" +
+				"    for (i in 0...count) {\r\n" +
+				"      if (this[i] != other[i]) {\r\n" +
+				"        return true\r\n" +
+				"      }\r\n" +
+				"    }\r\n" +
+				"\r\n" +
+				"    return false\r\n" +
+				"  }\r\n" +
+				"\r\n" +
 				"  count {\r\n" +
 				"    return _args.count\r\n" +
 				"  }\r\n" +
