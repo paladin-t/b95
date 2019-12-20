@@ -28,7 +28,7 @@ a, b = b, a
 
 compiles to
 
-```wren
+```dart
 var tmp_0 = LTuple.new(b, a)
 a = tmp_0[0]
 b = tmp_0[1]
@@ -78,7 +78,7 @@ There's a Windows executable "wren.exe" in the root directory of this repository
 
 #### 2.2 Simple
 
-```wren
+```dart
 import "b95" for B95
 
 var b95 = B95.new()
@@ -88,7 +88,7 @@ System.print(code.lines)
 
 #### 2.3 Eval it
 
-```wren
+```dart
 import "io" for File
 import "meta" for Meta
 import "b95" for B95
@@ -156,7 +156,7 @@ obj = require 'path'
 
 B95 invokes callback set by `B95.onRequire` during compile time for customized importing. Eg.
 
-```wren
+```dart
 b95.onRequire(
   Fn.new { | path, klass |
     if (path == "bar" && klass == "foo") {
@@ -172,7 +172,7 @@ b95.onRequire(
 
 B95 invokes callback set by `B95.onFunction` during compile time for customized functions. Eg.
 
-```wren
+```dart
 b95.onFunction(
   Fn.new { | module, func |
     if (module == "foo" && func == "bar") {
