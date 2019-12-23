@@ -68,7 +68,7 @@ Like widespread scripting languages, B95 allows using external function registra
 
 ### 2. How to use
 
-"[b95.wren](b95.wren)" is the only file of this compiler, just copy it to your project.
+"[b95.wren](b95.wren)" is the only file of this compiler, just copy it to your project. B95 is close to the original Lua, such as table is used for anything complex, array starts from 1, etc. Moreover, B95 offers more natural class.
 
 #### 2.1 Dependency
 

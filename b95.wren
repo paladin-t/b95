@@ -312,6 +312,9 @@ class Token {
 	}
 
 	static match(tk, data) {
+		if (tk == null) {
+			return data == null
+		}
 		if (data is String) {
 			return tk.data == data
 		} else if (data is List) {
@@ -2673,7 +2676,7 @@ class Parser {
 		var tbl = peek_ is PrototypeNode || peek_ is TableNode
 		push_(ExpressionNode.new(), To.body)
 
-		var isCalc = Fn.new { | tk |
+		var iscalc = Fn.new { | tk |
 			return tk != null && TokenTypes.match(tk.type, TokenTypes.Operator) && Token.match(
 				tk,
 				[
@@ -2718,7 +2721,7 @@ class Parser {
 
 			var linked = false
 			if (tklparenthesis) {
-				if (tkprev == null || isCalc.call(tkprev)) {
+				if (tkprev == null || iscalc.call(tkprev)) {
 					parenthesisCount = parenthesisCount + 1
 				} else {
 					call_()
@@ -2764,7 +2767,7 @@ class Parser {
 				tkprev = atom_(y)
 				if (TokenTypes.match(tkprev.type, TokenTypes.Newline)) {
 					var tknext = forward_(y)
-					if (!isCalc.call(tkprev2) && !isCalc.call(tknext)) {
+					if (!iscalc.call(tkprev2) && !iscalc.call(tknext)) {
 						break
 					}
 				}
@@ -3084,11 +3087,11 @@ class Parser {
 	}
 
 	newline_() {
-		if (!match_(TokenTypes.Newline)) {
+		if (!match_(TokenTypes.Newline) && !match_(TokenTypes.Operator, ";")) {
 			return false
 		}
 
-		while (match_(TokenTypes.Newline)) {
+		while (match_(TokenTypes.Newline) || match_(TokenTypes.Operator, ";")) {
 			// Does nothing.
 		}
 

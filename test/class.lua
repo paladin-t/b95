@@ -8,6 +8,7 @@ Base = class(
 
 		func0 = function (a, b)
 			local c = a / b
+
 			return c
 		end,
 		func1 = function (self, c, d)
