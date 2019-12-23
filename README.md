@@ -112,7 +112,12 @@ Klass = class(
 
     -- Compiles to Wren getter/setter.
     field0 = 0,
-    field1 = 1,
+    get_field1 = function (self)
+      return self._field1
+    end,
+    set_field1 = function (self, value)
+      self._field1 = value
+    end,
 
     -- Function without `self` compiles to static method.
     func0 = function (a, b)

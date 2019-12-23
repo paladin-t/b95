@@ -864,6 +864,90 @@ class Node {
 		return null
 	}
 
+	matchAtom(n, y, d) {
+		if (!n is AtomNode) {
+			return false
+		}
+		var tk = n.tokens.isEmpty ? null : n.tokens[0]
+		if (tk == null) {
+			return false
+		}
+		if (!TokenTypes.match(tk.type, y) && (d == null || Token.match(tk, d))) {
+			return false
+		}
+
+		return true
+	}
+	matchAccessor(lst) {
+		if (lst.count >= 3) {
+			// `self`, dot, _sym.
+			var s_n1 = lst[lst.count - 1]
+			var s_n2 = lst[lst.count - 2]
+			var s_n3 = lst[lst.count - 3]
+			if (!matchAtom(s_n1, TokenTypes.Identifier, null) || !s_n1.any.tokens[0].data.startsWith("_")) {
+				return 0
+			}
+			if (!matchAtom(s_n2, TokenTypes.Operator, [ ".", ":" ])) {
+				return 0
+			}
+			if (!matchAtom(s_n3, TokenTypes.Identifier, "self")) {
+				return 0
+			}
+
+			return 3
+		}
+
+		return 0
+	}
+	matchCall(lst) {
+		var ops = [
+			"+", "-", "*", "/", "\%", "^", "#",
+			"&", "~", "|", "<<", ">>", "//",
+			"==", "~=", "<=", ">=", "<", ">", "=",
+			"(", ")", "{", "}", "[", "]", "::",
+			";", ":", ",", ".", "..", "..."
+		]
+		if (lst.count >= 3) {
+			// Na/op, sym, dot, sym, call.
+			var s_n1 = lst[lst.count - 1]
+			var s_n2 = lst[lst.count - 2]
+			var s_n3 = lst[lst.count - 3]
+			var s_n4 = lst.count >= 4 ? lst[lst.count - 4] : null
+			if (!matchAtom(s_n1, TokenTypes.Identifier, null)) {
+				return 0
+			}
+			if (!matchAtom(s_n2, TokenTypes.Operator, [ ".", ":" ])) {
+				return 0
+			}
+			if (!matchAtom(s_n3, TokenTypes.Identifier, null)) {
+				return 0
+			}
+			if (s_n4 == null) {
+				return 3
+			} else if (matchAtom(s_n4, TokenTypes.Operator, ops)) {
+				return 3
+			} else {
+				return 0
+			}
+		} else if (lst.count >= 1) {
+			// Na/op, sym, call.
+			var s_n1 = lst[lst.count - 1]
+			var s_n2 = lst.count >= 2 ? lst[lst.count - 2] : null
+			if (!matchAtom(s_n1, TokenTypes.Identifier, null)) {
+				return 0
+			}
+			if (s_n2 == null) {
+				return 1
+			} else if (matchAtom(s_n2, TokenTypes.Operator, ops)) {
+				return 1
+			} else {
+				return 0
+			}
+		}
+
+		return 0
+	}
+
 	declare(gen, param, debug) {
 		declare(gen, param, debug, false)
 	}
@@ -1481,8 +1565,21 @@ class FieldNode is Node {
 	toCode(gen, indent, debug) {
 		gen.context.push(this)
 
+		var lst = [ ]
+		for (i in 0...body.count) {
+			var n = body[i]
+			var n_1 = i + 1 >= body.count ? null : body[i + 1]
+			if (n is AtomNode && !(n_1 != null && n_1 is CallNode)) {
+				var matched = matchAccessor(lst + [ n ])
+				if (matched > 1) { // Removes atoms.
+					lst = lst.take(lst.count - (matched - 1)).toList
+				}
+			}
+			lst.add(n)
+		}
+
 		var result = ""
-		for (n in body) {
+		for (n in lst) {
 			result = result + n.toCode(gen, 0, debug)
 		}
 
@@ -1528,7 +1625,13 @@ class ExpressionNode is Node {
 		var lst = [ ]
 		for (i in 0...body.count) {
 			var n = body[i]
-			if (n is CallNode) {
+			var n_1 = i + 1 >= body.count ? null : body[i + 1]
+			if (n is AtomNode && !(n_1 != null && n_1 is CallNode)) {
+				var matched = matchAccessor(lst + [ n ])
+				if (matched > 1) { // Removes atoms.
+					lst = lst.take(lst.count - (matched - 1)).toList
+				}
+			} else if (n is CallNode) {
 				var matched = matchCall(lst)
 				if (matched > 1) { // Merges atoms.
 					var atom = AtomNode.new()
@@ -1578,66 +1681,6 @@ class ExpressionNode is Node {
 	}
 
 	tag { "EXPRESSION" }
-
-	matchCall(lst) {
-		var ops = [
-			"+", "-", "*", "/", "\%", "^", "#",
-			"&", "~", "|", "<<", ">>", "//",
-			"==", "~=", "<=", ">=", "<", ">", "=",
-			"(", ")", "{", "}", "[", "]", "::",
-			";", ":", ",", ".", "..", "..."
-		]
-		var matchAtom = Fn.new { | n, y, d |
-			if (!n is AtomNode) {
-				return false
-			}
-			var tk = n.tokens[0]
-			if (!TokenTypes.match(tk.type, y) && (d == null || Token.match(tk, d))) {
-				return false
-			}
-
-			return true
-		}
-		if (lst.count >= 3) {
-			// Na/op, sym, dot, sym, call.
-			var s_1 = lst[lst.count - 1]
-			var s_2 = lst[lst.count - 2]
-			var s_3 = lst[lst.count - 3]
-			var s_4 = lst.count >= 4 ? lst[lst.count - 4] : null
-			if (!matchAtom.call(s_1, TokenTypes.Identifier, null)) {
-				return 0
-			}
-			if (!matchAtom.call(s_2, TokenTypes.Operator, [ ".", ":" ])) {
-				return 0
-			}
-			if (!matchAtom.call(s_3, TokenTypes.Identifier, null)) {
-				return 0
-			}
-			if (s_4 == null) {
-				return 3
-			} else if (matchAtom.call(s_4, TokenTypes.Operator, ops)) {
-				return 3
-			} else {
-				return 0
-			}
-		} else if (lst.count >= 1) {
-			// Na/op, sym, call.
-			var s_1 = lst[lst.count - 1]
-			var s_2 = lst.count >= 2 ? lst[lst.count - 2] : null
-			if (!matchAtom.call(s_1, TokenTypes.Identifier, null)) {
-				return 0
-			}
-			if (s_2 == null) {
-				return 1
-			} else if (matchAtom.call(s_2, TokenTypes.Operator, ops)) {
-				return 1
-			} else {
-				return 0
-			}
-		}
-
-		return 0
-	}
 }
 
 // Expressions that can evaluate out some value(s), eg. `21 * 2`,
