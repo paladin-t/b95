@@ -1,6 +1,6 @@
 co = coroutine.create(
 	function (value1, value2)
-		local tempvar1, tempvar2, tempvar3
+		local tempvar1, tempvar2, tempvar3 = nil, nil, nil
 
 		tempvar3 = 10
 		print('Coroutine section 1', value1, value2, tempvar3)

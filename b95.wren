@@ -1173,7 +1173,7 @@ class PrototypeNode is Node {
 		} else if (Token.match(tk, "__newindex")) {
 			gen.raise(Except.SyntaxNotImplemented("'__newindex'", tokens[0].begin))
 		} else if (Token.match(tk, "__call")) {
-			gen.raise(Except.SyntaxNotImplemented("'__call'", tokens[0].begin))
+			str = "call"
 		}
 
 		return str
@@ -3087,7 +3087,7 @@ class Parser {
 	}
 
 	newline_() {
-		if (!match_(TokenTypes.Newline) && !match_(TokenTypes.Operator, ";")) {
+		if (!(match_(TokenTypes.Newline) || match_(TokenTypes.Operator, ";"))) {
 			return false
 		}
 

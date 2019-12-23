@@ -133,7 +133,7 @@ Klass = class(
 obj = new(Klass) -- Instantiate a class, compiles to `Klass.new()`.
 ```
 
-This is also valid Lua syntax, so that it's possible to write compatible code both in B95 and (with the help of "[util/syntax.lua](util/syntax.lua)") in C-LUA.
+This is also valid Lua syntax, so that it's possible to write compatible code both in B95 and (with the help of "[util/syntax.lua](util/syntax.lua)") in C-Lua.
 
 #### 2.5 Table
 
@@ -201,7 +201,7 @@ b95.onFunction(
 | `break` | ✓ | ✓ |
 | `function` | ✓ | ✓ |
 | `return` | ✓ | ✓ |
-| `goto` | ✓ | |
+| `goto`, `::` | ✓ | |
 | `__add`, `__sub`, `__mul`, `__div`, `__mod` | ✓ | ✓ |
 | `__unm` | ✓ | ✓ |
 | `__idiv` | ✓ | |
@@ -216,7 +216,7 @@ b95.onFunction(
 | `__eq`, `__lt`, `__le` | ✓ | ✓ |
 | `__index` | ✓ | |
 | `__newindex` | ✓ | |
-| `__call` | ✓ | |
+| `__call` | ✓ | ✓ |
 | `=` | ✓ | ✓ |
 | `+`, `-`, `*`, `/`, `%` | ✓ | ✓ |
 | `//` | ✓ | |
@@ -242,6 +242,7 @@ b95.onFunction(
 | `collectgarbage([opt [, arg]])` | ✓ | ✓ |
 | `dofile([filename])` | ✓ | |
 | `error(message [, level])` | ✓ | ✓ |
+| `_G` | ✓ | |
 | `getmetatable(object)` | ✓ | |
 | `ipairs(t)` | ✓ | ✓ |
 | `load(chunk [, chunkname [, mode [, env]]])` | ✓ | |
@@ -259,6 +260,7 @@ b95.onFunction(
 | `tonumber(e [, base])` | ✓ | ✓ (partial) |
 | `tostring(v)` | ✓ | ✓ |
 | `type(v)` | ✓ | ✓ |
+| `xpcall(f, msgh [, arg1, ···])` | ✓ | |
 | `coroutine.create(f)` | ✓ | ✓ |
 | `coroutine.isyieldable()` | ✓ | ✓ |
 | `coroutine.resume(co [, val1, ...])` | ✓ | ✓ |
