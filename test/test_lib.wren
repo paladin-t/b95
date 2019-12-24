@@ -109,7 +109,7 @@ class LTuple {
 // Tuple lib.
 // Syntax lib.
 // Syntax begin.
-class LRange {
+class LRange is Sequence {
 	construct new(b, e, s) {
 		_begin = b
 		_end = e
@@ -142,7 +142,7 @@ class LRange {
 	}
 }
 
-class LIPairs {
+class LIPairs is Sequence {
 	construct new(tbl) {
 		_table = tbl
 	}
@@ -163,7 +163,7 @@ class LIPairs {
 	}
 }
 
-class LPairs {
+class LPairs is Sequence {
 	construct new(tbl) {
 		_table = tbl
 	}
@@ -591,9 +591,7 @@ class LString {
 		return byte(s, i, i)[1]
 	}
 	static byte(s, i, j) {
-		return LTable.new(
-			s.bytes.take(j).skip(i - 1).toList
-		)
+		return LTable.new(s.bytes.take(j).skip(i - 1))
 	}
 	static char() {
 		return ""
@@ -735,6 +733,69 @@ class LString {
 }
 // String end.
 // String lib.
+// Utf8 lib.
+// Utf8 begin.
+class LUtf8 {
+	static char() {
+		return ""
+	}
+	static char(arg0) {
+		return String.fromCodePoint(arg0)
+	}
+	static char(arg0, arg1) {
+		return char(arg0) + String.fromCodePoint(arg1)
+	}
+	static char(arg0, arg1, arg2) {
+		return char(arg0, arg1) + String.fromCodePoint(arg2)
+	}
+	static char(arg0, arg1, arg2, arg3) {
+		return char(arg0, arg1, arg2) + String.fromCodePoint(arg3)
+	}
+	static char(arg0, arg1, arg2, arg3, arg4) {
+		return char(arg0, arg1, arg2, arg3) + String.fromCodePoint(arg4)
+	}
+	static char(arg0, arg1, arg2, arg3, arg4, arg5) {
+		return char(arg0, arg1, arg2, arg3, arg4) + String.fromCodePoint(arg5)
+	}
+	static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+		return char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)
+	}
+	static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.
+		return char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)
+	}
+	static charPattern {
+		Fiber.abort("Not implemented.")
+	}
+	static codes(s) {
+		return LIPairs.new(LTable.new(s.codePoints))
+	}
+	static codepoint(s) {
+		return codepoint(s, 1)
+	}
+	static codepoint(s, i) {
+		return codepoint(s, i, i)[1]
+	}
+	static codepoint(s, i, j) {
+		return LTable.new(s.codePoints.take(j).skip(i - 1))
+	}
+	static len(s) {
+		return s.count
+	}
+	static len(s, i) {
+		return s.skip(i - 1).count
+	}
+	static len(s, i, j) {
+		return s.take(j).skip(i - 1).count
+	}
+	static offset(s, n) {
+		Fiber.abort("Not implemented.")
+	}
+	static offset(s, n, i) {
+		Fiber.abort("Not implemented.")
+	}
+}
+// Utf8 end.
+// Utf8 lib.
 // Table lib.
 // Table begin.
 class LTable {
@@ -818,6 +879,12 @@ class LTable {
 		} else if (obj is Map) {
 			for (kv in obj) {
 				this[kv.key] = kv.value
+			}
+		} else if (obj is Sequence) {
+			var i = 0
+			for (v in obj) {
+				this[i + 1] = v // 1-based.
+				i = i + 1
 			}
 		}
 	}
@@ -1117,15 +1184,11 @@ class math {
 class Test {
 	static run() {
 		runLoop()
-
 		runLib()
-
 		runMath()
-
 		runString()
-
+		runUtf8()
 		runTable()
-
 		runCoroutine()
 
 		System.print("OK")
@@ -1168,6 +1231,13 @@ class Test {
 		assert(LString.byte("hello", 2) == 101, "`LString` error.")
 		assert(LString.byte("hello", 2, 4).count == 3, "`LString` error.")
 		assert(LString.sub("hello", 2, 4) == "ell", "`LString` error.")
+	}
+	static runUtf8() {
+		assert(LUtf8.len("hello") == 5, "`LUtf8` error.")
+		assert(LUtf8.codes("hello").reduce(0, Fn.new { | acc, i | acc + i[1] }) == 532, "`LUtf8` error.")
+		assert(LUtf8.codepoint("hello") == 104, "`LUtf8` error.")
+		assert(LUtf8.codepoint("hello", 2) == 101, "`LUtf8` error.")
+		assert(LUtf8.codepoint("hello", 2, 4).count == 3, "`LUtf8` error.")
 	}
 	static runTable() {
 		var sum = 0

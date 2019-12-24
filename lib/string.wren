@@ -7,9 +7,7 @@ class LString {
 		return byte(s, i, i)[1]
 	}
 	static byte(s, i, j) {
-		return LTable.new(
-			s.bytes.take(j).skip(i - 1).toList
-		)
+		return LTable.new(s.bytes.take(j).skip(i - 1))
 	}
 	static char() {
 		return ""

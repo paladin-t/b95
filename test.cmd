@@ -8,6 +8,7 @@ call wren.exe test\test.wren test/class.lua
 call wren.exe test\test.wren test/lib.lua
 call wren.exe test\test.wren test/math.lua
 call wren.exe test\test.wren test/string.lua
+call wren.exe test\test.wren test/utf8.lua
 call wren.exe test\test.wren test/table.lua
 call wren.exe test\test.wren test/coroutine.lua
 echo Ready!

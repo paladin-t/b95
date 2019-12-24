@@ -27,6 +27,11 @@ var libs = [
 		"var": "__string"
 	},
 	{
+		"path": "lib/utf8.wren",
+		"tag": "// Utf8 lib.",
+		"var": "__utf8"
+	},
+	{
 		"path": "lib/table.wren",
 		"tag": "// Table lib.",
 		"var": "__table"

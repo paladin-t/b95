@@ -290,7 +290,12 @@ b95.onFunction(
 | `string.sub(s, i [, j])` | ✓ | ✓ |
 | `string.unpack(fmt, s [, pos])` | ✓ | |
 | `string.upper(s)` | ✓ | ✓ |
-| `utf8` | ✓ | |
+| `utf8.char(···)` | ✓ | ✓ |
+| `utf8.charpattern` | ✓ | |
+| `utf8.codes(s)` | ✓ | ✓ |
+| `utf8.codepoint(s [, i [, j]])` | ✓ | ✓ |
+| `utf8.len(s [, i [, j]])` | ✓ | ✓ |
+| `utf8.offset(s, n [, i])` | ✓ | |
 | `table.concat(list [, sep [, i [, j]]])` | ✓ | ✓ |
 | `table.insert(list, [pos,] value)` | ✓ | ✓ |
 | `table.move(a1, f, e, t [, a2])` | ✓ | |

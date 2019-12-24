@@ -81,6 +81,12 @@ class LTable {
 			for (kv in obj) {
 				this[kv.key] = kv.value
 			}
+		} else if (obj is Sequence) {
+			var i = 0
+			for (v in obj) {
+				this[i + 1] = v // 1-based.
+				i = i + 1
+			}
 		}
 	}
 

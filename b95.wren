@@ -462,7 +462,15 @@ class Lexer {
 	/**< Private. */
 
 	preprocess_(data) {
-		return data.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+		return data.replace("\r\n", "\n").replace("\r", "\n").split("\n").map(
+			Fn.new { | ln |
+				return ln.codePoints.map(
+					Fn.new { | cp |
+						return String.fromCodePoint(cp)
+					}
+				).toList
+			}
+		).toList
 	}
 	tokenize_(ln) {
 		cursor_ = 0
@@ -3537,6 +3545,10 @@ class Generator {
 		if (_using.contains("string")) {
 			use("table") // for `LTable`.
 		}
+		if (_using.contains("utf8")) {
+			use("syntax") // for `LIPairs`.
+			use("table") // for `LTable`.
+		}
 		if (_using.contains("debug")) {
 			libs.add(Library.LDebug)
 		} else {
@@ -3555,6 +3567,9 @@ class Generator {
 		}
 		if (_using.contains("string")) {
 			libs.add(Library.LString)
+		}
+		if (_using.contains("utf8")) {
+			libs.add(Library.LUtf8)
 		}
 		if (_using.contains("table")) {
 			libs.add(Library.LTable)
@@ -3729,7 +3744,7 @@ class Library {
 			// Syntax lib.
 			__syntax = "" +
 				"// Syntax begin.\r\n" +
-				"class LRange {\r\n" +
+				"class LRange is Sequence {\r\n" +
 				"  construct new(b, e, s) {\r\n" +
 				"    _begin = b\r\n" +
 				"    _end = e\r\n" +
@@ -3762,7 +3777,7 @@ class Library {
 				"  }\r\n" +
 				"}\r\n" +
 				"\r\n" +
-				"class LIPairs {\r\n" +
+				"class LIPairs is Sequence {\r\n" +
 				"  construct new(tbl) {\r\n" +
 				"    _table = tbl\r\n" +
 				"  }\r\n" +
@@ -3783,7 +3798,7 @@ class Library {
 				"  }\r\n" +
 				"}\r\n" +
 				"\r\n" +
-				"class LPairs {\r\n" +
+				"class LPairs is Sequence {\r\n" +
 				"  construct new(tbl) {\r\n" +
 				"    _table = tbl\r\n" +
 				"  }\r\n" +
@@ -4223,9 +4238,7 @@ class Library {
 				"    return byte(s, i, i)[1]\r\n" +
 				"  }\r\n" +
 				"  static byte(s, i, j) {\r\n" +
-				"    return LTable.new(\r\n" +
-				"      s.bytes.take(j).skip(i - 1).toList\r\n" +
-				"    )\r\n" +
+				"    return LTable.new(s.bytes.take(j).skip(i - 1))\r\n" +
 				"  }\r\n" +
 				"  static char() {\r\n" +
 				"    return \"\"\r\n" +
@@ -4370,6 +4383,75 @@ class Library {
 
 		return __string
 	}
+	static LUtf8 {
+		if (__utf8 == null) {
+			// Utf8 lib.
+			__utf8 = "" +
+				"// Utf8 begin.\r\n" +
+				"class LUtf8 {\r\n" +
+				"  static char() {\r\n" +
+				"    return \"\"\r\n" +
+				"  }\r\n" +
+				"  static char(arg0) {\r\n" +
+				"    return String.fromCodePoint(arg0)\r\n" +
+				"  }\r\n" +
+				"  static char(arg0, arg1) {\r\n" +
+				"    return char(arg0) + String.fromCodePoint(arg1)\r\n" +
+				"  }\r\n" +
+				"  static char(arg0, arg1, arg2) {\r\n" +
+				"    return char(arg0, arg1) + String.fromCodePoint(arg2)\r\n" +
+				"  }\r\n" +
+				"  static char(arg0, arg1, arg2, arg3) {\r\n" +
+				"    return char(arg0, arg1, arg2) + String.fromCodePoint(arg3)\r\n" +
+				"  }\r\n" +
+				"  static char(arg0, arg1, arg2, arg3, arg4) {\r\n" +
+				"    return char(arg0, arg1, arg2, arg3) + String.fromCodePoint(arg4)\r\n" +
+				"  }\r\n" +
+				"  static char(arg0, arg1, arg2, arg3, arg4, arg5) {\r\n" +
+				"    return char(arg0, arg1, arg2, arg3, arg4) + String.fromCodePoint(arg5)\r\n" +
+				"  }\r\n" +
+				"  static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {\r\n" +
+				"    return char(arg0, arg1, arg2, arg3, arg4, arg5) + String.fromCodePoint(arg6)\r\n" +
+				"  }\r\n" +
+				"  static char(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) { // Supports up to 8 parameters.\r\n" +
+				"    return char(arg0, arg1, arg2, arg3, arg4, arg5, arg6) + String.fromCodePoint(arg7)\r\n" +
+				"  }\r\n" +
+				"  static charPattern {\r\n" +
+				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"  }\r\n" +
+				"  static codes(s) {\r\n" +
+				"    return LIPairs.new(LTable.new(s.codePoints))\r\n" +
+				"  }\r\n" +
+				"  static codepoint(s) {\r\n" +
+				"    return codepoint(s, 1)\r\n" +
+				"  }\r\n" +
+				"  static codepoint(s, i) {\r\n" +
+				"    return codepoint(s, i, i)[1]\r\n" +
+				"  }\r\n" +
+				"  static codepoint(s, i, j) {\r\n" +
+				"    return LTable.new(s.codePoints.take(j).skip(i - 1))\r\n" +
+				"  }\r\n" +
+				"  static len(s) {\r\n" +
+				"    return s.count\r\n" +
+				"  }\r\n" +
+				"  static len(s, i) {\r\n" +
+				"    return s.skip(i - 1).count\r\n" +
+				"  }\r\n" +
+				"  static len(s, i, j) {\r\n" +
+				"    return s.take(j).skip(i - 1).count\r\n" +
+				"  }\r\n" +
+				"  static offset(s, n) {\r\n" +
+				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"  }\r\n" +
+				"  static offset(s, n, i) {\r\n" +
+				"    Fiber.abort(\"Not implemented.\")\r\n" +
+				"  }\r\n" +
+				"}\r\n" +
+				"// Utf8 end.\r\n" // Utf8 lib.
+		}
+
+		return __utf8
+	}
 	static LTable {
 		if (__table == null) {
 			// Table lib.
@@ -4456,6 +4538,12 @@ class Library {
 				"    } else if (obj is Map) {\r\n" +
 				"      for (kv in obj) {\r\n" +
 				"        this[kv.key] = kv.value\r\n" +
+				"      }\r\n" +
+				"    } else if (obj is Sequence) {\r\n" +
+				"      var i = 0\r\n" +
+				"      for (v in obj) {\r\n" +
+				"        this[i + 1] = v // 1-based.\r\n" +
+				"        i = i + 1\r\n" +
 				"      }\r\n" +
 				"    }\r\n" +
 				"  }\r\n" +
@@ -4826,6 +4914,14 @@ class Library {
 				"sub": { "lib": "string", "function": "LString.sub" },
 				"unpack": { "lib": "string", "function": "LString.unpack" },
 				"upper": { "lib": "string", "function": "LString.upper" }
+			},
+			"utf8": {
+				"char": { "lib": "utf8", "function": "LUtf8.char" },
+				"charpattern": { "lib": "utf8", "function": "LUtf8.charPattern" },
+				"codes": { "lib": "utf8", "function": "LUtf8.codes" },
+				"codepoint": { "lib": "utf8", "function": "LUtf8.codepoint" },
+				"len": { "lib": "utf8", "function": "LUtf8.len" },
+				"offset": { "lib": "utf8", "function": "LUtf8.offset" }
 			},
 			"table": {
 				"concat": { "lib": "table", "function": "LTable.concat" },

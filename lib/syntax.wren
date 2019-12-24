@@ -1,5 +1,5 @@
 // Syntax begin.
-class LRange {
+class LRange is Sequence {
 	construct new(b, e, s) {
 		_begin = b
 		_end = e
@@ -32,7 +32,7 @@ class LRange {
 	}
 }
 
-class LIPairs {
+class LIPairs is Sequence {
 	construct new(tbl) {
 		_table = tbl
 	}
@@ -53,7 +53,7 @@ class LIPairs {
 	}
 }
 
-class LPairs {
+class LPairs is Sequence {
 	construct new(tbl) {
 		_table = tbl
 	}
