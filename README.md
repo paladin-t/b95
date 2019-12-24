@@ -113,6 +113,10 @@ Klass = class(
     -- Compiles to Wren getter/setter.
     field0 = 0,
     get_field1 = function (self)
+      if self._field1 == nil then
+        self._field1 = 0
+      end
+
       return self._field1
     end,
     set_field1 = function (self, value)

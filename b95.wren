@@ -880,7 +880,10 @@ class Node {
 		if (tk == null) {
 			return false
 		}
-		if (!TokenTypes.match(tk.type, y) && (d == null || Token.match(tk, d))) {
+		if (!TokenTypes.match(tk.type, y)) {
+			return false
+		}
+		if (d != null && !Token.match(tk, d)) {
 			return false
 		}
 
@@ -3418,8 +3421,8 @@ class Code {
 
 /**
  * @brief Wren code generator that serializes Lua AST to Wren source code.
- *    AST nodes do most of the emitting work, this class helps to organize that
- *    procedure.
+ *   AST nodes do most of the emitting work, this class helps to organize that
+ *   procedure.
  */
 class Generator {
 	/**< Public. */
