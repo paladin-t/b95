@@ -52,6 +52,10 @@ function call(fn, ...)
 	return fn(...)
 end
 
+function apply(fn, ...)
+	return fn(...)
+end
+
 function length(obj)
 	return #obj
 end
