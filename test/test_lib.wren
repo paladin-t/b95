@@ -180,7 +180,7 @@ class LPairs is Sequence {
 	}
 }
 
-class Lua {
+class LStd {
 	static len(obj) {
 		return obj.len__
 	}
@@ -1208,11 +1208,11 @@ class Test {
 		assert(sum == 12, "`LRange` error.")
 	}
 	static runLib() {
-		assert(Lua.toNumber(Lua.toString(42)) == 42, "`Lib` error.")
-		assert(Lua.type(null) == "nil", "`Lib` error.")
-		assert(Lua.type(22 / 7) == "number", "`Lib` error.")
-		assert(Lua.type("hello") == "string", "`Lib` error.")
-		assert(Lua.type({ }) == "table", "`Lib` error.")
+		assert(LStd.toNumber(LStd.toString(42)) == 42, "`Lib` error.")
+		assert(LStd.type(null) == "nil", "`Lib` error.")
+		assert(LStd.type(22 / 7) == "number", "`Lib` error.")
+		assert(LStd.type("hello") == "string", "`Lib` error.")
+		assert(LStd.type({ }) == "table", "`Lib` error.")
 	}
 	static runMath() {
 		var eq = Fn.new { | l, r | l == r }

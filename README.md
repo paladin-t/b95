@@ -79,10 +79,10 @@ There's a Windows executable "wren.exe" in the root directory of this repository
 #### 2.2 Simple
 
 ```dart
-import "b95" for B95
+import "b95" for Lua
 
-var b95 = B95.new()
-var code = b95.compile("print('hello')")
+var lua = Lua.new()
+var code = lua.compile("print('hello')")
 System.print(code.lines)
 ```
 
@@ -91,15 +91,15 @@ System.print(code.lines)
 ```dart
 import "io" for File
 import "meta" for Meta
-import "b95" for B95
+import "b95" for Lua
 
-var b95 = B95.new()
-var code = b95.compile(File.read("tests/hello.lua"))
+var lua = Lua.new()
+var code = lua.compile(File.read("tests/hello.lua"))
 System.print(code.lines)
 Meta.eval(code.toString)
 ```
 
-See `class Code` in "[b95.wren](b95.wren)" for details of the returned object by `B95.compile`.
+See `class Code` in "[b95.wren](b95.wren)" for details of the returned object by `Lua.compile`.
 
 #### 2.4 Class
 
@@ -163,10 +163,10 @@ print(length(tbl))
 obj = require 'path'
 ```
 
-B95 invokes callback set by `B95.onRequire` during compile time for customized importing. Eg.
+B95 invokes callback set by `Lua.onRequire` during compile time for customized importing. Eg.
 
 ```dart
-b95.onRequire(
+lua.onRequire(
   Fn.new { | path, klass |
     if (path == "bar" && klass == "foo") {
       return "import \"path\" for module" // This replaces matched requirement.
@@ -179,10 +179,10 @@ b95.onRequire(
 
 #### 2.7 Registering
 
-B95 invokes callback set by `B95.onFunction` during compile time for customized functions. Eg.
+B95 invokes callback set by `Lua.onFunction` during compile time for customized functions. Eg.
 
 ```dart
-b95.onFunction(
+lua.onFunction(
   Fn.new { | module, func |
     if (module == "foo" && func == "bar") {
       return { "lib": null, "function": "lib.func" } // This replaces function invoking.

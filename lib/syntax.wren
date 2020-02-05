@@ -70,7 +70,7 @@ class LPairs is Sequence {
 	}
 }
 
-class Lua {
+class LStd {
 	static len(obj) {
 		return obj.len__
 	}

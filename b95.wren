@@ -3,7 +3,7 @@
 **
 ** For the latest info, see https://github.com/paladin-t/b95/
 **
-** Copyright (C) 2019 Tony Wang
+** Copyright (C) 2019 - 2020 Tony Wang
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a copy of
 ** this software and associated documentation files (the "Software"), to deal in
@@ -1861,7 +1861,7 @@ class CallNode is Node {
 			if (id != null && tk != null && TokenTypes.match(tk.type, TokenTypes.Operator) && Token.match(tk, [ ")", "]" ])) {
 				result = result + ".call"
 			}
-		} else if (sym == "Lua.apply") {
+		} else if (sym == "LStd.apply") {
 			start = 1
 		} else {
 			sym = gen.getSymbol(sym)
@@ -3818,7 +3818,7 @@ class Library {
 				"  }\r\n" +
 				"}\r\n" +
 				"\r\n" +
-				"class Lua {\r\n" +
+				"class LStd {\r\n" +
 				"  static len(obj) {\r\n" +
 				"    return obj.len__\r\n" +
 				"  }\r\n" +
@@ -4855,34 +4855,34 @@ class Library {
 	static function(gen, module, func) {
 		var entries = {
 			null: {
-				"length": { "lib": "syntax", "function": "Lua.len" },
+				"length": { "lib": "syntax", "function": "LStd.len" },
 
-				"assert": { "lib": "syntax", "function": "Lua.assert" },
-				"collectgarbage": { "lib": "syntax", "function": "Lua.collectGarbage" },
-				"dofile": { "lib": "syntax", "function": "Lua.doFile" },
-				"error": { "lib": "syntax", "function": "Lua.error" },
-				"getmetatable": { "lib": "syntax", "function": "Lua.getmetatable" },
+				"assert": { "lib": "syntax", "function": "LStd.assert" },
+				"collectgarbage": { "lib": "syntax", "function": "LStd.collectGarbage" },
+				"dofile": { "lib": "syntax", "function": "LStd.doFile" },
+				"error": { "lib": "syntax", "function": "LStd.error" },
+				"getmetatable": { "lib": "syntax", "function": "LStd.getmetatable" },
 				"ipairs": { "lib": "syntax", "function": "LIPairs.new" },
-				"load": { "lib": "syntax", "function": "Lua.load" },
-				"loadfile": { "lib": "syntax", "function": "Lua.loadFile" },
-				"next": { "lib": "syntax", "function": "Lua.next" },
+				"load": { "lib": "syntax", "function": "LStd.load" },
+				"loadfile": { "lib": "syntax", "function": "LStd.loadFile" },
+				"next": { "lib": "syntax", "function": "LStd.next" },
 				"pairs": { "lib": "syntax", "function": "LPairs.new" },
-				"pcall": { "lib": "syntax", "function": "Lua.pcall" },
-				"print": { "lib": "syntax", "function": "Lua.print" },
-				"rawequal": { "lib": "syntax", "function": "Lua.rawEqual" },
-				"rawget": { "lib": "syntax", "function": "Lua.rawGet" },
-				"rawlen": { "lib": "syntax", "function": "Lua.rawLen" },
-				"rawset": { "lib": "syntax", "function": "Lua.rawSet" },
-				"select": { "lib": "syntax", "function": "Lua.select" },
-				"setmetatable": { "lib": "syntax", "function": "Lua.setMetatable" },
-				"tonumber": { "lib": "syntax", "function": "Lua.toNumber" },
-				"tostring": { "lib": "syntax", "function": "Lua.toString" },
-				"type": { "lib": "syntax", "function": "Lua.type" },
+				"pcall": { "lib": "syntax", "function": "LStd.pcall" },
+				"print": { "lib": "syntax", "function": "LStd.print" },
+				"rawequal": { "lib": "syntax", "function": "LStd.rawEqual" },
+				"rawget": { "lib": "syntax", "function": "LStd.rawGet" },
+				"rawlen": { "lib": "syntax", "function": "LStd.rawLen" },
+				"rawset": { "lib": "syntax", "function": "LStd.rawSet" },
+				"select": { "lib": "syntax", "function": "LStd.select" },
+				"setmetatable": { "lib": "syntax", "function": "LStd.setMetatable" },
+				"tonumber": { "lib": "syntax", "function": "LStd.toNumber" },
+				"tostring": { "lib": "syntax", "function": "LStd.toString" },
+				"type": { "lib": "syntax", "function": "LStd.type" },
 
-				gen.constructor: { "lib": "syntax", "function": "Lua.new" },
-				"is": { "lib": "syntax", "function": "Lua.isa" },
-				"call": { "lib": "syntax", "function": "Lua.call" },
-				"apply": { "lib": "syntax", "function": "Lua.apply" },
+				gen.constructor: { "lib": "syntax", "function": "LStd.new" },
+				"is": { "lib": "syntax", "function": "LStd.isa" },
+				"call": { "lib": "syntax", "function": "LStd.call" },
+				"apply": { "lib": "syntax", "function": "LStd.apply" },
 
 				// For constants in module `math`.
 				"huge": { "lib": "math", "function": "huge" },
@@ -4980,7 +4980,7 @@ class Library {
 ** Main class
 */
 
-class B95 {
+class Lua {
 	/**< Constructor. */
 
 	construct new() {
